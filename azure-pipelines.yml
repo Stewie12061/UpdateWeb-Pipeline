@@ -13,12 +13,41 @@ pool:
 
 jobs:
 - job: UpdateWeb
-  displayName: 'Update wub publish folder'
+  displayName: 'Update web publish folder'
   steps:
     - task: WindowsMachineFileCopy@2
+      displayName: "Copy Publish folder from local to Server"
       inputs:
-        SourcePath: 'D:\UpdateSourceWeb'
+        SourcePath: 'D:\UpdateSourceWeb\00.PUBLISH'
         MachineNames: '116.118.95.121'
         AdminUserName: 'web-server\stewie12061'
         AdminPassword: 'As@19006123'
         TargetPath: 'C:\'
+    
+    - task: RemoteUnZip@1
+      inputs:
+        RemoteComputer: '116.118.95.121'
+        UserName: 'stewie12061'
+        Password: 'As@19006123'
+        ZipFile: 'C:\00.PUBLISH'
+        OutputPath: 'C:\Publish0'
+        RemoveZip: true
+
+    - task: PowerShellOnTargetMachines@3
+      inputs:
+        Machines: '116.118.95.121:5986'
+        UserName: 'web-server\stewie12061'
+        UserPassword: 'As@19006123'
+        InlineScript: |
+          $subfolders = Get-ChildItem -Path C:\Web -Directory
+          $folderNames = $subfolders | ForEach-Object { $_.Name }
+          
+          Write-Output "$folderNames"
+              
+          $folderNamesSplit = "$(FolderNames)" -split ','
+           foreach ($folder in $folderNamesSplit) {
+          robocopy "C:\Publish0" "C:\Web\$folder" /E /XD "Attached Logs" /XF "web.config" /MT:4 /MIR /NP /NDL /NFL /NC /NS
+          }
+        NewPsSessionOptionArguments: '-SkipCACheck -SkipCNCheck -SkipRevocationCheck'
+        ignoreLASTEXITCODE: true
+        RunPowershellInParallel: false
