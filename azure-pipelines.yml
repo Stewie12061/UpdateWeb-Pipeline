@@ -1,0 +1,24 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+resources:
+  - repo: self
+
+pool:
+  name: Stewie
+
+jobs:
+- job: UpdateWeb
+  displayName: 'Update wub publish folder'
+  steps:
+    - task: WindowsMachineFileCopy@2
+      inputs:
+        SourcePath: 'D:\UpdateSourceWeb'
+        MachineNames: '116.118.95.121:5986'
+        AdminUserName: 'web-server\stewie12061'
+        AdminPassword: 'As@19006123'
+        TargetPath: 'C:\'
