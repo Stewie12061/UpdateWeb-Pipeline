@@ -23,23 +23,16 @@ jobs:
         AdminUserName: 'web-server\stewie12061'
         AdminPassword: 'As@19006123'
         TargetPath: 'C:\'
-        AdditionalArguments: '/XD .git /XF README'
-        
-    - task: RemoteUnZip@1
-      inputs:
-        RemoteComputer: '116.118.95.121'
-        UserName: 'stewie12061'
-        Password: 'As@19006123'
-        ZipFile: 'C:\00.PUBLISH'
-        OutputPath: 'C:\Publish0'
-        RemoveZip: true
-
+        AdditionalArguments: '/XD .git /XF README.md'
+      
     - task: PowerShellOnTargetMachines@3
       inputs:
         Machines: '116.118.95.121:5986'
         UserName: 'web-server\stewie12061'
         UserPassword: 'As@19006123'
         InlineScript: |
+          Expand-Archive -LiteralPath 'C:\00.PUBLISH.zip' -DestinationPath C:\Publish0
+
           $subfolders = Get-ChildItem -Path C:\Web -Directory
           $folderNames = $subfolders | ForEach-Object { $_.Name }
           
