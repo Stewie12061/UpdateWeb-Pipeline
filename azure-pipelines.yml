@@ -31,7 +31,7 @@ jobs:
         UserName: 'web-server\stewie12061'
         UserPassword: 'As@19006123'
         InlineScript: |
-          Expand-Archive -LiteralPath 'C:\00.PUBLISH.zip' -DestinationPath C:\Publish0
+          Expand-Archive -LiteralPath 'C:\00.PUBLISH.zip' -DestinationPath C:\Publish0 -Force
 
           $subfolders = Get-ChildItem -Path C:\Web -Directory
           $folderNames = $subfolders | ForEach-Object { $_.Name }
