@@ -9,7 +9,7 @@ resources:
   - repo: self
 
 pool:
-  name: Stewie
+  name: Update source WEB
 
 jobs:
 - job: UpdateWeb
