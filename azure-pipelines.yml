@@ -18,22 +18,22 @@ jobs:
     - task: WindowsMachineFileCopy@2
       displayName: "Copy Publish zip from local to Server"
       inputs:
-        SourcePath: 'D:\UpdateSourceWeb'
+        SourcePath: 'D:\00.PUBLISH'
         MachineNames: '116.118.95.121'
         AdminUserName: 'web-server\stewie12061'
         AdminPassword: 'As@19006123'
-        TargetPath: 'C:\'
+        TargetPath: 'C:\Publish0'
         AdditionalArguments: '/XD .git /XF README.md'
     
-    - task: PowerShellOnTargetMachines@3
-      displayName: "Unzip Publish folder "
-      inputs:
-        Machines: '116.118.95.121:5986'
-        UserName: 'web-server\stewie12061'
-        UserPassword: 'As@19006123'
-        InlineScript: 'Expand-Archive -LiteralPath ''C:\00.PUBLISH.zip'' -DestinationPath C:\Publish0 -Force'
-        NewPsSessionOptionArguments: '-SkipCACheck -SkipCNCheck -SkipRevocationCheck'
-        ignoreLASTEXITCODE: true
+    # - task: PowerShellOnTargetMachines@3
+    #   displayName: "Unzip Publish folder "
+    #   inputs:
+    #     Machines: '116.118.95.121:5986'
+    #     UserName: 'web-server\stewie12061'
+    #     UserPassword: 'As@19006123'
+    #     InlineScript: 'Expand-Archive -LiteralPath ''C:\00.PUBLISH.zip'' -DestinationPath C:\Publish0 -Force'
+    #     NewPsSessionOptionArguments: '-SkipCACheck -SkipCNCheck -SkipRevocationCheck'
+    #     ignoreLASTEXITCODE: true
     - task: PowerShellOnTargetMachines@3
       displayName: "Sync all publish folder"
       inputs:
@@ -46,8 +46,7 @@ jobs:
           
           Write-Output "$folderNames"
               
-          $folderNamesSplit = "$(folderNames)" -split ','
-           foreach ($folder in $folderNamesSplit) {
+          foreach ($folder in $folderNames) {
           robocopy "C:\Publish0" "C:\Web\$folder" /E /XD "Attached Logs" /XF "web.config" /MT:4 /MIR /NP /NDL /NFL /NC /NS
           }
         NewPsSessionOptionArguments: '-SkipCACheck -SkipCNCheck -SkipRevocationCheck'
