@@ -18,7 +18,7 @@ jobs:
     - task: WindowsMachineFileCopy@2
       inputs:
         SourcePath: 'D:\UpdateSourceWeb'
-        MachineNames: '116.118.95.121:5986'
+        MachineNames: '116.118.95.121'
         AdminUserName: 'web-server\stewie12061'
         AdminPassword: 'As@19006123'
         TargetPath: 'C:\'
