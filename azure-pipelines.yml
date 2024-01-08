@@ -23,7 +23,8 @@ jobs:
         AdminUserName: 'web-server\stewie12061'
         AdminPassword: 'As@19006123'
         TargetPath: 'C:\'
-    
+        AdditionalArguments: '/XD .git /XF README'
+        
     - task: RemoteUnZip@1
       inputs:
         RemoteComputer: '116.118.95.121'
