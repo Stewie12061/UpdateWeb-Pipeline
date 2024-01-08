@@ -47,7 +47,7 @@ jobs:
           Write-Output "$folderNames"
               
           foreach ($folder in $folderNames) {
-            robocopy "C:\Publish0" "C:\Web\$folder" /E /XD "Attached Logs" /XF "web.config" /MT:4 /MIR /NP /NDL /NFL /NC /NS
+            robocopy "C:\Publish0" "C:\Web\$folder" /E /XD "Attached Logs" /XF "web.config" /MT:4 /NP /NDL /NFL /NC /NS
           }
         NewPsSessionOptionArguments: '-SkipCACheck -SkipCNCheck -SkipRevocationCheck'
         ignoreLASTEXITCODE: true
