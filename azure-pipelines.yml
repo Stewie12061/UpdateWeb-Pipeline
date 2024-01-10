@@ -22,6 +22,13 @@ jobs:
           cd "D:\Ansible"
           wsl ansible-playbook -i hosts.ini update_publish.yml
         ignoreLASTEXITCODE: true
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          cd "D:\Ansible"
+           wsl ansible-playbook -i hosts.ini update_publish.yml
+        pwsh: true
     # - task: WindowsMachineFileCopy@2
     #   displayName: "Copy Publish zip from local to Server"
     #   inputs:
