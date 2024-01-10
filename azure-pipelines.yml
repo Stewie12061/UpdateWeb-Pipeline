@@ -19,8 +19,8 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
+          cd "D:\Ansible"
           wsl
-          cd ../../../d/Ansible
           ansible-playbook -i hosts.ini update_publish.yml
         ignoreLASTEXITCODE: true
     # - task: WindowsMachineFileCopy@2
