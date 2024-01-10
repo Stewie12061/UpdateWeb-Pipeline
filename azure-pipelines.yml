@@ -15,12 +15,14 @@ jobs:
 - job: UpdateWeb
   displayName: 'Update web publish folder'
   steps:
-    - task: Ansible@0
+    - task: PowerShell@2
       inputs:
-        ansibleInterface: 'agentMachine'
-        playbookPathOnAgentMachine: 'D:\Ansible\update_publish.yml'
-        inventoriesAgentMachine: 'file'
-        inventoryFileOnAgentMachine: 'D:\Ansible\hosts.ini'
+        targetType: 'inline'
+        script: |
+          wsl
+          cd ../../../d/Ansible
+          ansible-playbook -i hosts.ini update_publish.yml
+        ignoreLASTEXITCODE: true
     # - task: WindowsMachineFileCopy@2
     #   displayName: "Copy Publish zip from local to Server"
     #   inputs:
