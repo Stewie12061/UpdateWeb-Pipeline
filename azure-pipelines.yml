@@ -23,10 +23,10 @@ jobs:
         archiveFile: 'D:\Ansible\00.PUBLISH.zip'
         replaceExistingArchive: true
       displayName: "Zip the publish folder"
-    # - task: PowerShell@2
-    #   inputs:
-    #     filePath: 'D:\Ansible\ansible-run.ps1'
-    #   displayName: "Run Ansible playbook"
+    - task: PowerShell@2
+      inputs:
+        filePath: 'D:\Ansible\ansible-run.ps1'
+      displayName: "Run Ansible playbook"
 
     # - task: WindowsMachineFileCopy@2
     #   displayName: "Copy Publish zip from local to Server"
