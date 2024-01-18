@@ -1,0 +1,73 @@
+---
+- name: Sync folders publish main to all
+  hosts: win
+  gather_facts: false
+
+  tasks:
+    - name: Zip publish folder
+      community.general.archive:
+        path: /mnt/d/00.PUBLISH/*
+        dest: /mnt/d/00.PUBLISH.zip
+        format: zip
+      delegate_to: localhost
+      become: false
+
+
+    # - name: Copy publish.zip to server
+    #   ansible.windows.win_copy:
+    #     src: /mnt/d/ansible/00.PUBLISH.zip
+    #     dest: C:\
+    
+    # - name: Install PSCX
+    #   community.windows.win_psmodule:
+    #     name: Pscx
+    #     state: present
+    #     allow_clobber: true
+
+    # - name: Unzip to Publish0
+    #   ansible.windows.win_shell: |
+    #     Microsoft.PowerShell.Archive\Expand-Archive -Path C:\00.PUBLISH.zip -DestinationPath C:\Publish0 -Force
+
+    # - name: Get subfolders in the Web directory
+    #   ansible.windows.win_find:
+    #     paths: "C:\\Web"
+    #     recurse: false
+    #     file_type: directory
+    #   register: subfolders
+
+    # - name: Extract folder names in Web directory
+    #   set_fact:
+    #     folder_names: "{{ subfolders.files | map(attribute='filename') | list }}"
+        
+    # - name: Output destination_folders
+    #   debug:
+    #     var: folder_names
+        
+    # - name: Sync all folders in Web directory
+    #   community.windows.win_robocopy:
+    #     src: "C:\\Publish0"
+    #     dest: "C:\\Web\\{{ item }}"
+    #     flags: "/E /MIR /XD Attached Logs /XF web.config /MT:4 /NP /NDL /NFL /NC /NS"
+    #   with_items: "{{ folder_names }}"
+      
+    # - name: Get subfolders in the WebDemo directory
+    #   ansible.windows.win_find:
+    #     paths: "C:\\WebDemo"
+    #     recurse: false
+    #     file_type: directory
+    #   register: subfolders
+
+    # - name: Extract folder names in WebDemo directory
+    #   set_fact:
+    #     folder_names: "{{ subfolders.files | map(attribute='filename') | list }}"
+        
+    # - name: Output destination_folders
+    #   debug:
+    #     var: folder_names
+        
+    # - name: Sync all folders in WebDemo directory
+    #   community.windows.win_robocopy:
+    #     src: "C:\\Publish0"
+    #     dest: "C:\\WebDemo\\{{ item }}"
+    #     flags: "/E /MIR /XD Attached Logs /XF web.config /MT:4 /NP /NDL /NFL /NC /NS"
+    #   with_items: "{{ folder_names }}"
