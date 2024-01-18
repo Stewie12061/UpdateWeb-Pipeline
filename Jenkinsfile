@@ -7,12 +7,10 @@ pipeline {
 
     environment {
         ANSIBLE_CRED = credentials('9940612d-bc87-4df5-b041-1436dae725c4')
-        ANSIBLE_USERNAME = ANSIBLE_CRED_USR
-        ANSIBLE_PASSWORD = ANSIBLE_CRED_PSW
     }
 
     parameters {
-        string(name: 'WEB_SERVER_LIST', defaultValue: '116.118.95.121, 103.245.249.218', description: 'Comma-separated list of web servers')
+        string(name: 'WEB_SERVER_LIST', defaultValue: '116.118.95.121, 103.245.249.218', description: 'List of WEB Server use ","')
     }
 
     stages {
@@ -20,7 +18,7 @@ pipeline {
             steps {
                 script {
                     def webServers = params.WEB_SERVER_LIST.split(',')
-                    def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_USERNAME}\nansible_password=${ANSIBLE_PASSWORD}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
+                    def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_CRED_USR}\nansible_password=${ANSIBLE_CRED_PSW}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
                     writeFile file: 'hosts.ini', text: inventoryContent
                 }
             }
