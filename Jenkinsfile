@@ -24,13 +24,9 @@ pipeline {
             }
         }
 
-        stage('Run Ansible Playbook update WEB') {
+        stage('Run update WEB') {
             steps {
-                ansiblePlaybook(
-                    playbook: 'update_publish.yml',
-                    inventory: 'hosts.ini',
-                    installation: 'AnsibleTool'
-                )
+                powershell(script: 'wsl ansible-playbook -i hosts.ini update_publish.yml')
             }
         }
     }
