@@ -20,7 +20,7 @@ pipeline {
                 script {
                     def selectedHost = input message: 'Please select the host', ok: 'Next',
                                         parameters: [
-                                        choice(name: 'PRODUCT', choices: getHostList("client-app","ansible/host/location"), description: 'Please select the host')]
+                                        choice(name: 'PRODUCT', choices: getHostList("win","D:\\UpdateSourceWeb\\hosts.ini"), description: 'Please select the host')]
                     
                     echo "Host:::: $selectedHost"
                 }
