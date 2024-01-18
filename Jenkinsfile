@@ -6,8 +6,6 @@ pipeline {
     }
 
     environment {
-        WEB_SERVER_IP = '116.118.95.121'
-        WEB_SERVER_2_IP = '103.245.249.218'
         WEBSERVER_PASSWORD = credentials('web-server-password-creds')
         WEBSERVER_USERNAME = 'stewie12061'
         ANSIBLE_PATH = 'D:/Ansible'
