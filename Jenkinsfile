@@ -5,8 +5,10 @@ pipeline {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
     }
 
-    environment{
-        WEBSERVER_PASSWORD = credentials('web-server-password-creds')
+    environment {
+        ANSIBLE_CRED = credentials('9940612d-bc87-4df5-b041-1436dae725c4')
+        ANSIBLE_USERNAME = ANSIBLE_CRED_USR
+        ANSIBLE_PASSWORD = ANSIBLE_CRED_PSW
     }
 
     parameters {
@@ -18,7 +20,7 @@ pipeline {
             steps {
                 script {
                     def webServers = params.WEB_SERVER_LIST.split(',')
-                    def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${params.WEBSERVER_USERNAME}\nansible_password=${WEBSERVER_PASSWORD}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
+                    def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_USERNAME}\nansible_password=${ANSIBLE_PASSWORD}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
                     writeFile file: 'hosts.ini', text: inventoryContent
                 }
             }
@@ -29,7 +31,6 @@ pipeline {
                 ansiblePlaybook(
                     playbook: 'update_publish.yml',
                     inventory: 'hosts.ini',
-                    credentialsId: 'web-server-password-creds'
                 )
             }
         }
