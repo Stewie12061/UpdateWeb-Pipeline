@@ -12,7 +12,7 @@ pipeline {
     }
 
     parameters {
-        string(name: 'WEB_SERVER_LIST', defaultValue: '', description: 'Comma-separated list of web servers')
+        string(name: 'WEB_SERVER_LIST', defaultValue: '116.118.95.121, 103.245.249.218', description: 'Comma-separated list of web servers')
     }
 
     stages {
