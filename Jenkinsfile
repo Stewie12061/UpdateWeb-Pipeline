@@ -48,7 +48,7 @@ pipeline {
         stage('Generate Inventory File') {
             steps {
                 script {
-                    def webServers = params.WEB_SERVER_LIST
+                    def webServers = env.WEB_SERVER_LIST
                     echo webServers
                     // def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
                     // def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_CRED_USR}\nansible_password=${ANSIBLE_CRED_PSW}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
