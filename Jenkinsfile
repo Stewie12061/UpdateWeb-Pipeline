@@ -40,16 +40,6 @@ pipeline {
     // }
 
     stages {
-        stage('User Input') {
-            steps {
-                script {
-                    input message: 'Select the WEB Servers', 
-                    parameters: [
-                        
-                    ]
-                }
-            }
-        }
         stage('Generate Inventory File') {
             steps {
                 script {
