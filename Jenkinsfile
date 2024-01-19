@@ -9,11 +9,48 @@ pipeline {
         ANSIBLE_CRED = credentials('9940612d-bc87-4df5-b041-1436dae725c4')
     }
 
-    parameters {
-        string(name: 'WEB_SERVER_LIST', defaultValue: '116.118.95.121, 103.245.249.218', description: 'List of WEB Server use ","')
-    }
+    // parameters {
+    //     string(name: 'WEB_SERVER_LIST', defaultValue: '116.118.95.121, 103.245.249.218', description: 'List of WEB Server use ","')
+    // }
 
     stages {
+        stage('User Input') {
+            steps {
+                script {
+                    def userInput = input(
+                        id: 'userInput',
+                        message: 'Select the WEB Servers',
+                        ok: 'Ok',
+                        submitterParameter: 'WEB_SERVER_LIST',
+                        parameters: [
+                            [
+                                $class: 'PT_MULTI_SELECT',
+                                description: 'Select Web Server to update source web',
+                                filterLength: 1,
+                                filterable: false,
+                                name: 'Web Server',
+                                randomName: 'choice-parameter-367991973195900',
+                                script: [
+                                    $class: 'GroovyScript',
+                                    fallbackScript: [
+                                        classpath: [],
+                                        oldScript: '',
+                                        sandbox: false,
+                                        script: 'return[\'error\']'
+                                    ],
+                                    script: [
+                                        classpath: [],
+                                        oldScript: '',
+                                        sandbox: false,
+                                        script: 'return [\'116.118.95.121\', \'103.245.249.218\']'
+                                    ]
+                                ]
+                            ]
+                        ]
+                    )
+                }
+            }
+        }
         stage('Generate Inventory File') {
             steps {
                 script {
