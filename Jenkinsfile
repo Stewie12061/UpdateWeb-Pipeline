@@ -22,28 +22,28 @@ pipeline {
                         ok 'Ok'
                         submitterParameter 'WEB_SERVER_LIST'
                         parameters {
-                            activeChoice choiceType: 'PT_MULTI_SELECT', 
-                            description: 'Select Web Server to update source web', 
-                            filterLength: 1, filterable: false, 
-                            name: 'Web Server', 
-                            randomName: 'choice-parameter-367991973195900', 
+                            activeChoice choiceType: 'PT_MULTI_SELECT',
+                            description: 'Select Web Server to update source web',
+                            filterLength: 1,
+                            filterable: false,
+                            name: 'Web Server',
+                            randomName: 'choice-parameter-369311546499000',
                             script: groovyScript(
-                                        fallbackScript: [
-                                            classpath: [], 
-                                            oldScript: '', 
-                                            sandbox: true, 
-                                            script: 'return[\'error\']'
-                                        ], 
-                                        script: [
-                                            classpath: [], 
-                                            oldScript: '', 
-                                            sandbox: true, 
-                                            script: 'return [\'116.118.95.121\', \'103.245.249.218\']'
-                                        ]
-                                    )
+                                fallbackScript: [
+                                    classpath: [],
+                                    oldScript: '',
+                                    sandbox: true,
+                                    script: 'return ["error"]'
+                                    ],
+                                script: [
+                                    classpath: [],
+                                    oldScript: '',
+                                    sandbox: true, 
+                                    script: 'return ["116.118.95.121", "103.245.249.218"]'
+                                ]
+                            )
                         }
                     }
-
                 }
             }
         }
