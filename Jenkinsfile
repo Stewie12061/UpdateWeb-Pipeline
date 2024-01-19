@@ -1,3 +1,27 @@
+properties([
+    parameters([
+        [$class: 'ChoiceParameter',
+            choiceType: 'PT_CHECKBOX', 
+            description: 'Select Web Server to update source web', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'WEB_SERVER_LIST', 
+            randomName: 'choice-parameter-370758416905300', 
+            script: groovyScript(
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: 'return ["error"]'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: 'return ["116.118.95.121", "103.245.249.218"]'
+                ]
+            )
+        ]
+    ])
+])
 pipeline {
     agent any
 
@@ -19,28 +43,7 @@ pipeline {
                 script {
                     input message: 'Select the WEB Servers', 
                     parameters: [
-                        activeChoice(
-                            choiceType: 'PT_CHECKBOX', 
-                            description: 'Select Web Server to update source web', 
-                            filterLength: 1, 
-                            filterable: false, 
-                            name: 'WEB_SERVER_LIST', 
-                            randomName: 'choice-parameter-370758416905300', 
-                            script: groovyScript(
-                                fallbackScript: [
-                                    classpath: [], 
-                                    oldScript: '', 
-                                    sandbox: true, 
-                                    script: 'return ["error"]'
-                                ], 
-                                script: [
-                                    classpath: [], 
-                                    oldScript: '', 
-                                    sandbox: true, 
-                                    script: 'return ["116.118.95.121", "103.245.249.218"]'
-                                ]
-                            )
-                        )
+                        
                     ]
                 }
             }
@@ -48,7 +51,7 @@ pipeline {
         stage('Generate Inventory File') {
             steps {
                 script {
-                    def webServers = env.WEB_SERVER_LIST
+                    def webServers = ${params.WEB_SERVER_LIST}
                     echo webServers
                     // def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
                     // def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_CRED_USR}\nansible_password=${ANSIBLE_CRED_PSW}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
@@ -57,11 +60,11 @@ pipeline {
             }
         }
 
-        stage('Run update WEB') {
-            steps {
-                powershell(script: 'wsl ansible-playbook -i hosts.ini update_publish.yml')
-            }
-        }
+        // stage('Run update WEB') {
+        //     steps {
+        //         powershell(script: 'wsl ansible-playbook -i hosts.ini update_publish.yml')
+        //     }
+        // }
     }
 
     post {
