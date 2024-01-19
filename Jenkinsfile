@@ -17,36 +17,31 @@ pipeline {
         stage('User Input') {
             steps {
                 script {
-                    def userInput = input(
-                        id: 'userInput',
-                        message: 'Select the WEB Servers',  // Provide the message as a string
-                        ok: 'Ok',
-                        submitterParameter: 'WEB_SERVER_LIST',
-                        parameters: [
-                            activeChoice(
-                                choiceType: 'PT_MULTI_SELECT', 
-                                description: 'Select Web Server to update source web', 
-                                filterLength: 1, 
-                                filterable: false, 
-                                name: 'Web Server', 
-                                randomName: 'choice-parameter-369311546499000', 
-                                script: groovyScript(
-                                    fallbackScript: [
-                                        classpath: [], 
-                                        oldScript: '', 
-                                        sandbox: true, 
-                                        script: 'return ["error"]'
-                                    ], 
-                                    script: [
-                                        classpath: [], 
-                                        oldScript: '', 
-                                        sandbox: true, 
-                                        script: 'return ["116.118.95.121", "103.245.249.218"]'
-                                    ]
-                                )
+                    input message: 'Select the WEB Servers', 
+                    parameters: [
+                        activeChoice(
+                            choiceType: 'PT_CHECKBOX', 
+                            description: 'Select Web Server to update source web', 
+                            filterLength: 1, 
+                            filterable: false, 
+                            name: 'WEB_SERVER_LIST', 
+                            randomName: 'choice-parameter-370758416905300', 
+                            script: groovyScript(
+                                fallbackScript: [
+                                    classpath: [], 
+                                    oldScript: '', 
+                                    sandbox: true, 
+                                    script: 'return ["error"]'
+                                ], 
+                                script: [
+                                    classpath: [], 
+                                    oldScript: '', 
+                                    sandbox: true, 
+                                    script: 'return ["116.118.95.121", "103.245.249.218"]'
+                                ]
                             )
-                        ]
-                    )
+                        )
+                    ]
                 }
             }
         }
