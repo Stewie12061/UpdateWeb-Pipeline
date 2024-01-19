@@ -31,13 +31,13 @@ pipeline {
                                         fallbackScript: [
                                             classpath: [], 
                                             oldScript: '', 
-                                            sandbox: false, 
+                                            sandbox: true, 
                                             script: 'return[\'error\']'
                                         ], 
                                         script: [
                                             classpath: [], 
                                             oldScript: '', 
-                                            sandbox: false, 
+                                            sandbox: true, 
                                             script: 'return [\'116.118.95.121\', \'103.245.249.218\']'
                                         ]
                                     )
