@@ -10,12 +10,14 @@ properties([
             script: groovyScript(
                 fallbackScript: [
                     classpath: [], 
-                    sandbox: false, 
+                    oldScript: '',
+                    sandbox: true,
                     script: 'return ["error"]'
                 ], 
                 script: [
                     classpath: [], 
-                    sandbox: false, 
+                    oldScript: '',
+                    sandbox: true,
                     script: 'return ["116.118.95.121", "103.245.249.218"]'
                 ]
             )
