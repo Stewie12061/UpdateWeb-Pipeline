@@ -50,11 +50,11 @@ pipeline {
             }
         }
 
-        // stage('Run update WEB') {
-        //     steps {
-        //         powershell(script: 'wsl ansible-playbook -i hosts.ini update_publish.yml')
-        //     }
-        // }
+        stage('Run update WEB') {
+            steps {
+                powershell(script: 'wsl ansible-playbook -i hosts.ini update_publish.yml')
+            }
+        }
     }
 
     post {
