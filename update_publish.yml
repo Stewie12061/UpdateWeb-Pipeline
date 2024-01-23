@@ -49,24 +49,24 @@
         flags: "/E /MIR /XD Attached Logs /XF web.config /MT:4 /NP /NDL /NFL /NC /NS"
       with_items: "{{ folder_names }}"
       
-    # - name: Get subfolders in the WebDemo directory
-    #   ansible.windows.win_find:
-    #     paths: "C:\\WebDemo"
-    #     recurse: false
-    #     file_type: directory
-    #   register: subfolders
+    - name: Get subfolders in the WebDemo directory
+      ansible.windows.win_find:
+        paths: "C:\\WebDemo"
+        recurse: false
+        file_type: directory
+      register: subfolders
 
-    # - name: Extract folder names in WebDemo directory
-    #   set_fact:
-    #     folder_names: "{{ subfolders.files | map(attribute='filename') | list }}"
+    - name: Extract folder names in WebDemo directory
+      set_fact:
+        folder_names: "{{ subfolders.files | map(attribute='filename') | list }}"
         
-    # - name: Output destination_folders
-    #   debug:
-    #     var: folder_names
+    - name: Output destination_folders
+      debug:
+        var: folder_names
         
-    # - name: Sync all folders in WebDemo directory
-    #   community.windows.win_robocopy:
-    #     src: "C:\\Publish0"
-    #     dest: "C:\\WebDemo\\{{ item }}"
-    #     flags: "/E /MIR /XD Attached Logs /XF web.config /MT:4 /NP /NDL /NFL /NC /NS"
-    #   with_items: "{{ folder_names }}"
+    - name: Sync all folders in WebDemo directory
+      community.windows.win_robocopy:
+        src: "C:\\Publish0"
+        dest: "C:\\WebDemo\\{{ item }}"
+        flags: "/E /MIR /XD Attached Logs /XF web.config /MT:4 /NP /NDL /NFL /NC /NS"
+      with_items: "{{ folder_names }}"
