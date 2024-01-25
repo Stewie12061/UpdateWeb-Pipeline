@@ -119,11 +119,27 @@
 
 properties([
     parameters([
-        multiselect(
-            choices: ['10.0.0.1', '10.0.0.2', '10.0.0.3'],
-            description: 'Select Server IPs',
-            name: 'SERVER_IP'
-        ),
+        [$class: 'ChoiceParameter', 
+         choiceType: 'PT_CHECKBOX',
+         description: 'Select Server IPs',
+         filterLength: 1,
+         filterable: false,
+         name: 'SERVER_IP',
+         script: [
+            $class: 'GroovyScript',
+            fallbackScript: [
+                classpath: [],
+                sandbox: false,
+                script: 'return ["Error: Active Choices script not loaded"]'
+            ],
+            script: [
+                classpath: [],
+                sandbox: false,
+                script: '''
+                    return ["10.0.0.1", "10.0.0.2", "10.0.0.3"]
+                '''
+            ]
+        ]],
         booleanParam(
             defaultValue: false,
             description: 'Select Folders',
@@ -187,4 +203,5 @@ pipeline {
         }
     }
 }
+
 
