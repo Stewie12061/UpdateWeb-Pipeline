@@ -60,19 +60,6 @@ properties([
                         '''
                 ]
             ]
-        ],
-        [$class: 'DynamicReferenceParameter', 
-            choiceType: 'ET_FORMATTED_HTML', 
-            description: 'These are the details in HTML format', 
-            name: 'DetailsInHTML', 
-            omitValueField: false, 
-            randomName: 'choice-parameter-370758416905302',
-            referencedParameters: 'WEB_SERVER_LIST, OPTIONS_LIST',
-            script: [
-                $class: 'ScriptlerScript',
-                parameters: [[$class: 'org.biouno.unochoice.model.ScriptlerScriptParameter', name: '', value: '$value']],
-                scriptlerScriptId: 'script.groovy'
-            ]
         ]
     ])
 ])
