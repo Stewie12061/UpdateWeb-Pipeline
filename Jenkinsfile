@@ -118,69 +118,75 @@
 // }
 
 
+properties([
+    parameters([
+        choice(
+            choices: ['10.0.0.1', '10.0.0.2', '10.0.0.3'],
+            description: 'Select Server IPs',
+            name: 'SERVER_IP',
+            multiSelectDelimiter: ','
+        ),
+        booleanParam(
+            defaultValue: false,
+            description: 'Select Folders',
+            name: 'SELECT_FOLDERS'
+        )
+    ])
+])
+
 pipeline {
     agent any
 
-    parameters {
-        extendedChoice(
-            name: 'PARENT_PARAMETER',
-            type: 'PT_CHECKBOX',
-            description: 'Select parent options',
-            multiSelectDelimiter: ',',
-            groovyScript: 'return ["Option1", "Option2", "Option3"]'
-        )
-
-        activeChoiceReactive(
-            name: 'CHILD_PARAMETER',
-            description: 'Select child options',
-            script: [
-                $class: 'GroovyScript',
-                fallbackScript: [
-                    classpath: [],
-                    script: 'return ["Select a parent option first"]'
-                ],
-                script: [
-                    classpath: [],
-                    script: '''
-                        def parentSelection = parentParameterValue ?: []
-                        
-                        if (parentSelection.contains("Option1")) {
-                            return ["Option1.1", "Option1.2"]
-                        } else if (parentSelection.contains("Option2")) {
-                            return ["Option2.1", "Option2.2", "Option2.3"]
-                        } else if (parentSelection.contains("Option3")) {
-                            return ["Option3.1", "Option3.2", "Option3.3", "Option3.4"]
-                        } else {
-                            return ["Select a parent option first"]
-                        }
-                    '''
-                ]
-            ]
-        )
-    }
-
     stages {
-        stage('User Input') {
+        stage('Input Parameters') {
+            when {
+                expression { params.SELECT_FOLDERS }
+            }
             steps {
                 script {
-                    def parentSelection = params.PARENT_PARAMETER.split(',')
-                    def childSelection = params.CHILD_PARAMETER.split(',')
-                    
-                    echo "Selected parent values: ${parentSelection}"
-                    echo "Selected child values: ${childSelection}"
+                    // Define server IPs and corresponding folder names
+                    def serverIpFolderMap = [
+                        '10.0.0.1': ['one', 'two', 'three'],
+                        '10.0.0.2': ['four', 'five', 'six'],
+                        '10.0.0.3': ['seven']
+                    ]
 
-                    // Now you can use the selected values in your pipeline logic
-                    // For example, run different steps based on the selected values
+                    // Create a list to store folder names based on selected server IPs
+                    def selectedFolders = []
+
+                    // Iterate through selected server IPs and add corresponding folders
+                    params.SERVER_IP.each { selectedIp ->
+                        selectedFolders += serverIpFolderMap[selectedIp]
+                    }
+
+                    // Prompt user to select folder names based on selected server IPs
+                    def selectedFolderNames = input(
+                        id: 'folderNameInput',
+                        message: 'Select Folder Names',
+                        parameters: [
+                            choice(
+                                name: 'FOLDER_NAME',
+                                choices: selectedFolders,
+                                description: 'Select Folder Names',
+                                multiSelectDelimiter: ','
+                            )
+                        ]
+                    )
+
+                    // Output selected parameters
+                    echo "Selected Server IPs: ${params.SERVER_IP}"
+                    echo "Selected Folder Names: ${selectedFolderNames}"
                 }
             }
         }
 
-        // Add more stages as needed
-    }
-
-    post {
-        always {
-            // Clean up or perform actions after the pipeline completes
+        // Your pipeline stages go here
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Add your build steps here
+            }
         }
     }
 }
+
