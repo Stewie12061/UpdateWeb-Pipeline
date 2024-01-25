@@ -48,11 +48,11 @@ properties([
                         }
 
                         WEB_SERVER_LIST.each { server ->
-                            def folderNames = executeCommand(server, '''
-                                $server = $env:SERVER
-                                $folders = Get-ChildItem -Path "D:\\ERP9" -Directory | Select-Object -ExpandProperty Name
-                                $folders -join ','
-                            ''').trim().split(',')
+                            def folderNames = executeCommand(server, """
+                                \$server = \$env:SERVER
+                                \$folders = Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                \$folders -join ','
+                            """).trim().split(',')
                             optionsMap[server] = folderNames
                         }
 
@@ -84,17 +84,18 @@ pipeline {
             steps {
                 script {
                     def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
-                    def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_CRED_USR}\nansible_password=${ANSIBLE_CRED_PSW}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
-                    writeFile file: 'hosts.ini', text: inventoryContent
+                    echo webServers
+                    // def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_CRED_USR}\nansible_password=${ANSIBLE_CRED_PSW}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
+                    // writeFile file: 'hosts.ini', text: inventoryContent
                 }
             }
         }
 
-        stage('Run update WEB') {
-            steps {
-                powershell(script: 'wsl ansible-playbook -i hosts.ini update_publish.yml')
-            }
-        }
+        // stage('Run update WEB') {
+        //     steps {
+        //         powershell(script: 'wsl ansible-playbook -i hosts.ini update_publish.yml')
+        //     }
+        // }
     }
 
     post {
