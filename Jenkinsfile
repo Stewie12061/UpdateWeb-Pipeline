@@ -117,14 +117,12 @@
 //     }
 // }
 
-
 properties([
     parameters([
-        choice(
+        multiselect(
             choices: ['10.0.0.1', '10.0.0.2', '10.0.0.3'],
             description: 'Select Server IPs',
-            name: 'SERVER_IP',
-            multiSelectDelimiter: ','
+            name: 'SERVER_IP'
         ),
         booleanParam(
             defaultValue: false,
@@ -175,7 +173,7 @@ pipeline {
 
                     // Output selected parameters
                     echo "Selected Server IPs: ${params.SERVER_IP}"
-                    echo "Selected Folder Names: ${selectedFolderNames}"
+                    echo "Selected Folder Names: ${selectedFolderNames.join(', ')}"
                 }
             }
         }
