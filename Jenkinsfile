@@ -33,37 +33,34 @@ properties([
                     sandbox: false,
                     script: 'return ["error"]'
                 ], 
-                script: [
-                    classpath: [], 
-                    sandbox: false,
-                    script: '''
-                        def optionsMap = [:]
-                        
-                        def executeCommand(server, command) {
-                            def processBuilder = new ProcessBuilder('powershell.exe', '-Command', command)
-                            processBuilder.environment().put('SERVER', server)
-                            def process = processBuilder.start()
-                            process.waitFor()
-                            return process.text
-                        }
+                script: '''
+                    def optionsMap = [:]
 
-                        WEB_SERVER_LIST.each { server ->
-                            def folderNames = executeCommand(server, """
-                                \$server = \$env:SERVER
-                                \$folders = Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
-                                \$folders -join ','
-                            """).trim().split(',')
-                            optionsMap[server] = folderNames
-                        }
+                    def executeCommand(server, command) {
+                        def processBuilder = new ProcessBuilder('powershell.exe', '-Command', command)
+                        processBuilder.environment().put('SERVER', server)
+                        def process = processBuilder.start()
+                        process.waitFor()
+                        return process.text
+                    }
 
-                        def selectedServer = WEB_SERVER_LIST.first()
-                        return optionsMap.containsKey(selectedServer) ? optionsMap[selectedServer] : []
-                    '''
-                ]
+                    def selectedServer = WEB_SERVER_LIST.find { it.toBoolean() }
+                    if (selectedServer) {
+                        def folderNames = executeCommand(selectedServer, """
+                            \$server = \$env:SERVER
+                            \$folders = Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                            \$folders -join ','
+                        """).trim().split(',')
+                        optionsMap[selectedServer] = folderNames
+                    }
+
+                    return optionsMap[selectedServer] ?: []
+                '''
             )
         ]
     ])
 ])
+
 pipeline {
     agent any
 
