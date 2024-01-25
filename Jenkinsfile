@@ -13,11 +13,7 @@ properties([
                     sandbox: false,
                     script: 'return ["error"]'
                 ], 
-                script: [
-                    classpath: [], 
-                    sandbox: false,
-                    script: 'return ["116.118.95.121", "103.245.249.218"]'
-                ]
+                script: 'return ["116.118.95.121:selected", "103.245.249.218:selected", "10.0.0.1"]'
             )
         ],
         [$class: 'CascadeChoiceParameter', 
@@ -34,49 +30,28 @@ properties([
                     script: 'return []'
                 ], 
                 script: '''
-                    def optionsMap = [:]
+                    def options = []
 
-                    def executeCommand(server, command) {
-                        def powershellScript = """
-                            \$uri = "https://$server:5986"
-                            \$user = "stewie12061"
-                            \$password = "As@19006123"
-                            \$securepassword = ConvertTo-SecureString -String \$password -AsPlainText -Force
-                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \$user, \$securepassword
-
-                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
-                            Invoke-Command -Session \$session -ScriptBlock {
-                                $command
-                            }
-                            Remove-PSSession -Session \$session
-                        """
-                        def processBuilder = new ProcessBuilder('powershell.exe', '-Command', powershellScript)
-                        def process = processBuilder.start()
-                        process.waitFor()
-                        return process.text.trim()
-                    }
-
-                    WEB_SERVER_LIST.each { server ->
-                        if (server.toBoolean()) {
-                            def result = executeCommand(server, """
-                                # Connect to the server and retrieve folder names
-                                # Example: Change 'D:\\ERP9' to the actual path
-                                cd D:\\ERP9
-                                Get-ChildItem -Directory | ForEach-Object { \$_.Name }
-                            """)
-                            def folderNames = result.split('\n')
-                            optionsMap[server] = folderNames
+                    if (WEB_SERVER_LIST) {
+                        if (WEB_SERVER_LIST.contains("116.118.95.121")) {
+                            options.addAll(["Barretos", "Sao Paulo", "Itu"])
+                        }
+                        if (WEB_SERVER_LIST.contains("103.245.249.218")) {
+                            options.addAll(["Rio de Janeiro", "Mangaratiba"])
+                        }
+                        if (WEB_SERVER_LIST.contains("10.0.0.1")) {
+                            options.addAll(["Unknown state"])
                         }
                     }
 
-                    return optionsMap[WEB_SERVER_LIST.find { it.toBoolean() }] ?: []
-
+                    return options
                 '''
-            )
+            ),
+            visible: { params -> params.WEB_SERVER_LIST }
         ]
     ])
 ])
+
 
 pipeline {
     agent any
