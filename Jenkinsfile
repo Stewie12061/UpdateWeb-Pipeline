@@ -84,7 +84,7 @@ pipeline {
             steps {
                 script {
                     def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
-                    echo webServers
+                    echo "$webServers"
                     // def inventoryContent = "[win]\n${webServers.join('\n')}\n\n[win:vars]\nansible_user=${ANSIBLE_CRED_USR}\nansible_password=${ANSIBLE_CRED_PSW}\nansible_port=5986\nansible_connection=winrm\nansible_winrm_server_cert_validation=ignore"
                     // writeFile file: 'hosts.ini', text: inventoryContent
                 }
