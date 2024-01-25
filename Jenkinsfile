@@ -71,9 +71,9 @@ pipeline {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
     }
 
-    environment {
-        ANSIBLE_CRED = credentials('9940612d-bc87-4df5-b041-1436dae725c4')
-    }
+    // environment {
+    //     ANSIBLE_CRED = credentials('9940612d-bc87-4df5-b041-1436dae725c4')
+    // }
 
     // parameters {
     //     string(name: 'WEB_SERVER_LIST', defaultValue: '116.118.95.121, 103.245.249.218', description: 'List of WEB Server use ","')
