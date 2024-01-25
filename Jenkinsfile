@@ -1,19 +1,32 @@
 properties([
     parameters([
-        [$class: 'CascadeChoiceParameter',
+        [$class: 'ChoiceParameter',
             choiceType: 'PT_CHECKBOX', 
             description: 'Select Web Server to update source web', 
             filterLength: 1, 
             filterable: false, 
             name: 'WEB_SERVER_LIST', 
-            script: groovyScript(
+            randomName: 'choice-parameter-370758416905300', 
+            script: [
+                $class: 'GroovyScript', 
                 fallbackScript: [
                     classpath: [], 
-                    sandbox: false,
-                    script: 'return ["error"]'
+                    sandbox: false, 
+                    script: 
+                        'return[\'Could not get Env\']'
                 ], 
-                script: 'return ["116.118.95.121:selected", "103.245.249.218:selected", "10.0.0.1"]'
-            )
+                script: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: '''
+                        return [
+                            "116.118.95.121:selected",
+                            "103.245.249.218:selected",
+                            "10.0.0.1"
+                        ]
+                    '''
+                ]
+            ]
         ],
         [$class: 'CascadeChoiceParameter', 
             choiceType: 'PT_CHECKBOX', 
@@ -21,35 +34,48 @@ properties([
             filterLength: 1, 
             filterable: false, 
             name: 'OPTIONS_LIST', 
+            randomName: 'choice-parameter-370758416905301', 
             referencedParameters: 'WEB_SERVER_LIST',
-            script: groovyScript(
+            script: [
+                $class: 'GroovyScript', 
                 fallbackScript: [
                     classpath: [], 
-                    sandbox: false,
-                    script: 'return ["error"]'
+                    sandbox: false, 
+                    script: 
+                        'return[\'Could not get Environment from Env Param\']'
                 ], 
-                script: '''
-                    def options = []
-
-                    if (WEB_SERVER_LIST) {
-                        if (WEB_SERVER_LIST.contains("116.118.95.121")) {
-                            options.addAll(["Barretos", "Sao Paulo", "Itu"])
-                        }
-                        if (WEB_SERVER_LIST.contains("103.245.249.218")) {
-                            options.addAll(["Rio de Janeiro", "Mangaratiba"])
-                        }
-                        if (WEB_SERVER_LIST.contains("10.0.0.1")) {
-                            options.addAll(["Unknown state"])
-                        }
-                    }
-
-                    return options
-                '''
-            ),
+                script: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: 
+                        ''' if (WEB_SERVER_LIST.equals("116.118.95.121")){
+                                return["devaaa001","devaaa002","devbbb001","devbbb002","devccc001","devccc002"]
+                            }
+                            else if(WEB_SERVER_LIST.equals("103.245.249.218")){
+                                return["qaaaa001","qabbb002","qaccc003"]
+                            }
+                            else if(WEB_SERVER_LIST.equals("10.0.0.1")){
+                                return["staaa001","stbbb002","stccc003"]
+                            }
+                        '''
+                ]
+            ]
+        ],
+        [$class: 'DynamicReferenceParameter', 
+            choiceType: 'ET_FORMATTED_HTML', 
+            description: 'These are the details in HTML format', 
+            name: 'DetailsInHTML', 
+            omitValueField: false, 
+            randomName: 'choice-parameter-370758416905302',
+            referencedParameters: 'WEB_SERVER_LIST, OPTIONS_LIST',
+            script: [
+                $class: 'ScriptlerScript',
+                parameters: [[$class: 'org.biouno.unochoice.model.ScriptlerScriptParameter', name: '', value: '$value']],
+                scriptlerScriptId: 'script.groovy'
+            ]
         ]
     ])
 ])
-
 
 pipeline {
     agent any
