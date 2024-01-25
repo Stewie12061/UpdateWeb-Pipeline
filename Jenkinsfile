@@ -36,35 +36,47 @@ properties([
                 script: '''
                     def optionsMap = [:]
 
+                    def executeCommand(server, command) {
+                        def powershellScript = """
+                            \$uri = "https://$server:5986"
+                            \$user = "stewie12061"
+                            \$password = "As@19006123"
+                            \$securepassword = ConvertTo-SecureString -String \$password -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \$user, \$securepassword
+
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+                            Invoke-Command -Session \$session -ScriptBlock {
+                                $command
+                            }
+                            Remove-PSSession -Session \$session
+                        """
+                        def processBuilder = new ProcessBuilder('powershell.exe', '-Command', powershellScript)
+                        def process = processBuilder.start()
+                        process.waitFor()
+                        return process.text.trim()
+                    }
+
                     WEB_SERVER_LIST.each { server ->
                         if (server.toBoolean()) {
-                            def folderNames = executeCommand(server, """
-                                # PowerShell Remoting to get folder names
-                                \$session = New-PSSession -ComputerName \$env:SERVER -Credential (Get-Credential)
-                                \$folders = Invoke-Command -Session \$session -ScriptBlock {
-                                    Get-ChildItem -Path 'D:\\ERP9' -Directory | ForEach-Object { \$_.Name }
-                                }
-                                Remove-PSSession -Session \$session
-                                \$folders -join ','
+                            def result = executeCommand(server, """
+                                # Connect to the server and retrieve folder names
+                                # Example: Change 'D:\\ERP9' to the actual path
+                                cd D:\\ERP9
+                                Get-ChildItem -Directory | ForEach-Object { \$_.Name }
                             """)
-                            optionsMap[server] = folderNames.split(',')
+                            def folderNames = result.split('\n')
+                            optionsMap[server] = folderNames
                         }
                     }
 
                     return optionsMap[WEB_SERVER_LIST.find { it.toBoolean() }] ?: []
+
                 '''
             )
         ]
     ])
 ])
-
-def executeCommand(server, command) {
-    def processBuilder = new ProcessBuilder('powershell.exe', '-Command', command)
-    processBuilder.environment().put('SERVER', server)
-    def process = processBuilder.start()
-    process.waitFor()
-    return process.text.trim()
-}
 
 pipeline {
     agent any
