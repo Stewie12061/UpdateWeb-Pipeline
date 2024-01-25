@@ -31,27 +31,23 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return [""]'
+                    script: 'return []'
                 ], 
                 script: '''
                     def optionsMap = [:]
 
-                    def executeCommand(server, command) {
-                        def processBuilder = new ProcessBuilder('powershell.exe', '-Command', command)
-                        processBuilder.environment().put('SERVER', server)
-                        def process = processBuilder.start()
-                        process.waitFor()
-                        return process.text.trim()
-                    }
-
                     WEB_SERVER_LIST.each { server ->
                         if (server.toBoolean()) {
                             def folderNames = executeCommand(server, """
-                                \$server = \$env:SERVER
-                                \$folders = Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                # PowerShell Remoting to get folder names
+                                \$session = New-PSSession -ComputerName \$env:SERVER -Credential (Get-Credential)
+                                \$folders = Invoke-Command -Session \$session -ScriptBlock {
+                                    Get-ChildItem -Path 'D:\\ERP9' -Directory | ForEach-Object { \$_.Name }
+                                }
+                                Remove-PSSession -Session \$session
                                 \$folders -join ','
-                            """).split(',')
-                            optionsMap[server] = folderNames
+                            """)
+                            optionsMap[server] = folderNames.split(',')
                         }
                     }
 
@@ -61,6 +57,14 @@ properties([
         ]
     ])
 ])
+
+def executeCommand(server, command) {
+    def processBuilder = new ProcessBuilder('powershell.exe', '-Command', command)
+    processBuilder.environment().put('SERVER', server)
+    def process = processBuilder.start()
+    process.waitFor()
+    return process.text.trim()
+}
 
 pipeline {
     agent any
