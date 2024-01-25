@@ -6,7 +6,6 @@ properties([
             filterLength: 1, 
             filterable: false, 
             name: 'WEB_SERVER_LIST', 
-            randomName: 'choice-parameter-370758416905300', 
             script: groovyScript(
                 fallbackScript: [
                     classpath: [], 
@@ -47,7 +46,6 @@ properties([
                     return options
                 '''
             ),
-            visible: { params -> params.WEB_SERVER_LIST }
         ]
     ])
 ])
