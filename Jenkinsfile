@@ -31,7 +31,7 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["error"]'
+                    script: 'return [""]'
                 ], 
                 script: '''
                     def optionsMap = [:]
@@ -41,20 +41,21 @@ properties([
                         processBuilder.environment().put('SERVER', server)
                         def process = processBuilder.start()
                         process.waitFor()
-                        return process.text
+                        return process.text.trim()
                     }
 
-                    def selectedServer = WEB_SERVER_LIST.find { it.toBoolean() }
-                    if (selectedServer) {
-                        def folderNames = executeCommand(selectedServer, """
-                            \$server = \$env:SERVER
-                            \$folders = Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
-                            \$folders -join ','
-                        """).trim().split(',')
-                        optionsMap[selectedServer] = folderNames
+                    WEB_SERVER_LIST.each { server ->
+                        if (server.toBoolean()) {
+                            def folderNames = executeCommand(server, """
+                                \$server = \$env:SERVER
+                                \$folders = Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                \$folders -join ','
+                            """).split(',')
+                            optionsMap[server] = folderNames
+                        }
                     }
 
-                    return optionsMap[selectedServer] ?: []
+                    return optionsMap[WEB_SERVER_LIST.find { it.toBoolean() }] ?: []
                 '''
             )
         ]
