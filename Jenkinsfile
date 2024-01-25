@@ -10,15 +10,55 @@ properties([
             script: groovyScript(
                 fallbackScript: [
                     classpath: [], 
-                    oldScript: '',
-                    sandbox: true,
+                    sandbox: false,
                     script: 'return ["error"]'
                 ], 
                 script: [
                     classpath: [], 
-                    oldScript: '',
-                    sandbox: true,
+                    sandbox: false,
                     script: 'return ["116.118.95.121", "103.245.249.218"]'
+                ]
+            )
+        ],
+        [$class: 'CascadeChoiceParameter', 
+            choiceType: 'PT_CHECKBOX', 
+            description: 'Select Options', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'OPTIONS_LIST', 
+            referencedParameters: 'WEB_SERVER_LIST',
+            script: groovyScript(
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["error"]'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: '''
+                        def optionsMap = [:]
+                        
+                        def executeCommand(server, command) {
+                            def processBuilder = new ProcessBuilder('powershell.exe', '-Command', command)
+                            processBuilder.environment().put('SERVER', server)
+                            def process = processBuilder.start()
+                            process.waitFor()
+                            return process.text
+                        }
+
+                        WEB_SERVER_LIST.each { server ->
+                            def folderNames = executeCommand(server, '''
+                                $server = $env:SERVER
+                                $folders = Get-ChildItem -Path "D:\\ERP9" -Directory | Select-Object -ExpandProperty Name
+                                $folders -join ','
+                            ''').trim().split(',')
+                            optionsMap[server] = folderNames
+                        }
+
+                        def selectedServer = WEB_SERVER_LIST.first()
+                        return optionsMap.containsKey(selectedServer) ? optionsMap[selectedServer] : []
+                    '''
                 ]
             )
         ]
