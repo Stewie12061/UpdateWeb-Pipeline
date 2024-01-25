@@ -1,6 +1,6 @@
 properties([
     parameters([
-        [$class: 'ChoiceParameter',
+        [$class: 'CascadeChoiceParameter',
             choiceType: 'PT_CHECKBOX', 
             description: 'Select Web Server to update source web', 
             filterLength: 1, 
@@ -27,7 +27,7 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return []'
+                    script: 'return ["error"]'
                 ], 
                 script: '''
                     def options = []
