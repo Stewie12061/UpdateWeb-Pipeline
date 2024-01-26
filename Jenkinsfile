@@ -128,7 +128,8 @@ pipeline {
                         builders[webServer] = {
                             stage("Push source web to Server ${webServer}") {
                                 def zipPublish = '''
-                                    Compress-Archive -Path "D:\\00.PUBLISH\\*" -DestinationPath "D:\\00.PUBLISH.zip" -Force
+                                    $source = "$env:SOURCE_PATH"
+                                    Compress-Archive -Path "$source\\*" -DestinationPath "$source.zip" -Force
                                 '''
                                 powershell(script: zipPublish)
                                 // remote = [:]
