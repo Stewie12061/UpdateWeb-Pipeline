@@ -41,9 +41,9 @@ properties([
                         def customers = []
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
                             customers.addAll(["KH-ERP8-01","KH-ERP8-02","KH-ERP9-01","KH-ERP9-02","KH-ERP9-03"])
-                        }else if(WEB_SERVER_LIST.contains("103.245.249.218")){
+                        }if(WEB_SERVER_LIST.contains("103.245.249.218")){
                             customers.addAll(["KH-ERP8-03","KH-ERP8-04","KH-ERP9-04","KH-ERP9-05","KH-ERP9-06"])
-                        }else if(WEB_SERVER_LIST.contains("10.0.0.1")){
+                        }if(WEB_SERVER_LIST.contains("10.0.0.1")){
                             customers.addAll(["stewie","jennie"])
                         }
                         return customers
