@@ -146,14 +146,16 @@ pipeline {
                                 }else if(webServer.equals("10.0.0.1")){
                                     remoteName = "test"
                                 }
+                                def username = "${env:USERNAME}"
+                                def password = "${env:PASSWORD}"
 
-                                remote = [:]
+                                def remote = [:]
                                 remote.name = remoteName
-                                remote.host = "${webServer}"
+                                remote.host = webServer
                                 remote.allowAnyHosts = true
                                 remote.failOnError = true
-                                remote.user = "${env:USERNAME}"
-                                remote.password = "${env:PASSWORD}"
+                                remote.user = username
+                                remote.password = password
 
                                 sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
                             }
