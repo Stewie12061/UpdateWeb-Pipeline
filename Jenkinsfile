@@ -20,7 +20,7 @@ properties([
                 ]
             )
         ],
-        [$class: 'ChoiceParameter',
+        [$class: 'CascadeChoiceParameter',
             choiceType: 'PT_CHECKBOX', 
             description: 'Select customer to update', 
             filterLength: 1, 
