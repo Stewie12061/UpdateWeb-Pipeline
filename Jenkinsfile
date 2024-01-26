@@ -16,7 +16,7 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["116.118.95.121","103.245.249.218","10.0.0.1"]'
+                    script: 'return ["116.118.95.121:selected","103.245.249.218:selected","10.0.0.1"]'
                 ]
             )
         ],
@@ -40,10 +40,10 @@ properties([
                     script: '''
                         def customers = []
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                            customers.addAll(["KH-ERP8-01","KH-ERP8-02","KH-ERP9-01","KH-ERP9-02","KH-ERP9-03"])
+                            customers.addAll(["KH-ERP8-01","KH-ERP8-02","KH-ERP9-01","KH-ERP9-02:selected","KH-ERP9-03:selected"])
                         }
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            customers.addAll(["KH-ERP8-03","KH-ERP8-04","KH-ERP9-04","KH-ERP9-05","KH-ERP9-06"])
+                            customers.addAll(["KH-ERP8-03","KH-ERP8-04","KH-ERP9-04:selected","KH-ERP9-05","KH-ERP9-06:selected"])
                         }
                         if(WEB_SERVER_LIST.contains("10.0.0.1")){
                             customers.addAll(["stewie","jennie"])
