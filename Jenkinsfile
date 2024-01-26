@@ -127,14 +127,18 @@ pipeline {
                     for(webServer in webServers){
                         builders[webServer] = {
                             stage("Push source web to Server ${webServer}") {
-                                remote = [:]
-                                remote.host = "${webServer}"
-                                remote.allowAnyHosts = true
-                                remote.failOnError = true
-                                remote.user = "${env:USERNAME}"
-                                remote.password = "${env:PASSWORD}"
+                                def zipPublish = '''
+                                    Compress-Archive -Path "D:\\00.PUBLISH\\*" -DestinationPath "D:\\00.PUBLISH.zip" -Force
+                                '''
+                                powershell(script: zipPublish)
+                                // remote = [:]
+                                // remote.host = "${webServer}"
+                                // remote.allowAnyHosts = true
+                                // remote.failOnError = true
+                                // remote.user = "${env:USERNAME}"
+                                // remote.password = "${env:PASSWORD}"
 
-                                sshPut remote: remote, from: "${env:SOURCE_PATH}", into: "${env:DESTINATION_PATH_PATH}"
+                                // sshPut remote: remote, from: "${env:SOURCE_PATH}", into: "${env:DESTINATION_PATH_PATH}"
                             }
                         }
                     }
