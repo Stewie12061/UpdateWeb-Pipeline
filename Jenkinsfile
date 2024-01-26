@@ -111,20 +111,24 @@ pipeline {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
     }
 
-    // parameters {
-    //     string(name: 'USERNAME', defaultValue: 'stewie12061', description: 'User login to server')
-    //     string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'User login to server')
-    //     string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
-    // }
+    parameters {
+        string(name: 'USERNAME', defaultValue: 'stewie12061', description: 'User login to server')
+        string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'User login to server')
+        string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
+    }
 
     stages {
         stage('Generate Inventory File') {
             steps {
                 script {
                     def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
-                    def customers = params.CUSTOMER_LIST.split(',').collect { it.trim() }
+                    def customers1 = params.SERVER_1_CUSTOMER_LIST.split(',').collect { it.trim() }
+                    def customers2 = params.SERVER_2_CUSTOMER_LIST.split(',').collect { it.trim() }
+                    def customers3 = params.SERVER_3_CUSTOMER_LIST.split(',').collect { it.trim() }
                     echo "$webServers"
-                    echo "$customers"
+                    echo "$customers1"
+                    echo "$customers2"
+                    echo "$customers3"
                     
                 }
             }
