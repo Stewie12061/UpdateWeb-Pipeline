@@ -113,17 +113,18 @@ pipeline {
 
     parameters {
         string(name: 'USERNAME', defaultValue: 'stewie12061', description: 'User login to server')
-        string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'User login to server')
+        string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
     }
 
     stages {
         stage('Update source web to server') {
             steps {
-                script {
+                script{
+                    script {
                     def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
                     parallel {
-                        stage('Server 116.118.95.121') {
+                        stage('Update web on Server 116.118.95.121') {
                             when {
                                 expression { webServers.contains("116.118.95.121") }
                             }
@@ -135,7 +136,7 @@ pipeline {
                             }
                         }
 
-                        stage('Server 103.245.249.218') {
+                        stage('Update web on Server 103.245.249.218') {
                             when {
                                 expression { webServers.contains("103.245.249.218") }
                             }
@@ -147,7 +148,7 @@ pipeline {
                             }
                         }
 
-                        stage('Server 10.0.0.1') {
+                        stage('Update web on Server 10.0.0.1') {
                             when {
                                 expression { webServers.contains("10.0.0.1") }
                             }
@@ -159,6 +160,7 @@ pipeline {
                             }
                         }
                     }           
+                }
                 }
             }
         }
