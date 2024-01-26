@@ -138,9 +138,17 @@ pipeline {
                     for(webServer in webServers){
                         builders[webServer] = {
                             stage("Push source web to Server ${webServer}") {
-                                
+                                def remoteName = ""
+                                if(webServer.equals("116.118.95.121")){
+                                    remoteName = "web-server"
+                                }else if(webServer.equals("103.245.249.218")){
+                                    remoteName = "web-server-2"
+                                }else if(webServer.equals("10.0.0.1")){
+                                    remoteName = "test"
+                                }
+
                                 remote = [:]
-                                remote.name = "${webServer}"
+                                remote.name = remoteName
                                 remote.host = "${webServer}"
                                 remote.allowAnyHosts = true
                                 remote.failOnError = true
