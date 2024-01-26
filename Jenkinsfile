@@ -25,7 +25,7 @@ properties([
             description: 'Select customer to update', 
             filterLength: 1, 
             filterable: false, 
-            name: 'SERVER_1_CUSTOMER_LIST', 
+            name: 'SERVER_116.118.95.121_CUSTOMER_LIST', 
             randomName: 'choice-parameter-370758416905301',
             referencedParameters: 'WEB_SERVER_LIST', 
             script: groovyScript(
@@ -52,7 +52,7 @@ properties([
             description: 'Select customer to update', 
             filterLength: 1, 
             filterable: false, 
-            name: 'SERVER_2_CUSTOMER_LIST', 
+            name: 'SERVER_103.245.249.218_CUSTOMER_LIST', 
             randomName: 'choice-parameter-370758416905302',
             referencedParameters: 'WEB_SERVER_LIST', 
             script: groovyScript(
@@ -79,7 +79,7 @@ properties([
             description: 'Select customer to update', 
             filterLength: 1, 
             filterable: false, 
-            name: 'SERVER_3_CUSTOMER_LIST', 
+            name: 'SERVER_10.0.0.1_CUSTOMER_LIST', 
             randomName: 'choice-parameter-370758416905303',
             referencedParameters: 'WEB_SERVER_LIST', 
             script: groovyScript(
@@ -120,47 +120,22 @@ pipeline {
     stages {
         stage('Update source web to server') {
             steps {
-                script{
-                    script {
+                script {
                     def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
-                    parallel {
-                        stage('Update web on Server 116.118.95.121') {
-                            when {
-                                expression { webServers.contains("116.118.95.121") }
-                            }
-                            steps {
-                                echo 'Running stage for Server 116.118.95.121'
-                                def customers = params.SERVER_1_CUSTOMER_LIST.split(',').collect { it.trim() }
-                                echo "$customers"
-                                // Add your actions for Server 1 here
-                            }
-                        }
-
-                        stage('Update web on Server 103.245.249.218') {
-                            when {
-                                expression { webServers.contains("103.245.249.218") }
-                            }
-                            steps {
-                                echo 'Running stage for Server 103.245.249.218'
-                                def customers = params.SERVER_2_CUSTOMER_LIST.split(',').collect { it.trim() }
-                                echo "$customers"
-                                // Add your actions for Server 2 here
+                    def builders = [:]
+                    for(webServer in webServers){
+                        builders[webServer] = {
+                            stage("Update web on Server ${webServer}") {
+                                steps {
+                                    echo 'Running stage for Server ${webServer}'  
+                                    def customers = params.SERVER_1_CUSTOMER_LIST.split(',').collect { it.trim() }
+                                    echo "$customers"
+                                    // Add your actions for Server 1 here
+                                }
                             }
                         }
-
-                        stage('Update web on Server 10.0.0.1') {
-                            when {
-                                expression { webServers.contains("10.0.0.1") }
-                            }
-                            steps {
-                                echo 'Running stage for Server 10.0.0.1'
-                                def customers = params.SERVER_3_CUSTOMER_LIST.split(',').collect { it.trim() }
-                                echo "$customers"
-                                // Add your actions for Server 3 here
-                            }
-                        }
-                    }           
-                }
+                    }
+                    parallel builders
                 }
             }
         }
