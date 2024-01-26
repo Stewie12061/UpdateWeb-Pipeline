@@ -146,7 +146,7 @@ pipeline {
                                 remote.user = "${env:USERNAME}"
                                 remote.password = "${env:PASSWORD}"
 
-                                sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH_PATH}"
+                                sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
                             }
                         }
                     }
