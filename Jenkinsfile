@@ -118,18 +118,47 @@ pipeline {
     }
 
     stages {
-        stage('Generate Inventory File') {
+        stage('Update source web to server') {
             steps {
                 script {
                     def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
-                    def customers1 = params.SERVER_1_CUSTOMER_LIST.split(',').collect { it.trim() }
-                    def customers2 = params.SERVER_2_CUSTOMER_LIST.split(',').collect { it.trim() }
-                    def customers3 = params.SERVER_3_CUSTOMER_LIST.split(',').collect { it.trim() }
-                    echo "$webServers"
-                    echo "$customers1"
-                    echo "$customers2"
-                    echo "$customers3"
-                    
+                    parallel {
+                        stage('Server 116.118.95.121') {
+                            when {
+                                expression { webServers.contains("116.118.95.121") }
+                            }
+                            steps {
+                                echo 'Running stage for Server 116.118.95.121'
+                                def customers = params.SERVER_1_CUSTOMER_LIST.split(',').collect { it.trim() }
+                                echo "$customers"
+                                // Add your actions for Server 1 here
+                            }
+                        }
+
+                        stage('Server 103.245.249.218') {
+                            when {
+                                expression { webServers.contains("103.245.249.218") }
+                            }
+                            steps {
+                                echo 'Running stage for Server 103.245.249.218'
+                                def customers = params.SERVER_2_CUSTOMER_LIST.split(',').collect { it.trim() }
+                                echo "$customers"
+                                // Add your actions for Server 2 here
+                            }
+                        }
+
+                        stage('Server 10.0.0.1') {
+                            when {
+                                expression { webServers.contains("10.0.0.1") }
+                            }
+                            steps {
+                                echo 'Running stage for Server 10.0.0.1'
+                                def customers = params.SERVER_3_CUSTOMER_LIST.split(',').collect { it.trim() }
+                                echo "$customers"
+                                // Add your actions for Server 3 here
+                            }
+                        }
+                    }           
                 }
             }
         }
