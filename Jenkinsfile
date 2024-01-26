@@ -121,13 +121,13 @@ pipeline {
         stage('Update source web to server') {
             steps {
                 script {
-                    def webServers = params.WEB_SERVER_LIST.split(',').collect { it.trim() }
+                    def webServers = params.WEB_SERVER_LIST.split(',')
                     def builders = [:]
                     for(webServer in webServers){
                         builders[webServer] = {
                             stage("Update web on Server ${webServer}") {
                                 steps {
-                                    echo 'Running stage for Server ${webServer}'  
+                                    echo "Running stage for Server ${webServer}"
                                     def customers = params.SERVER_1_CUSTOMER_LIST.split(',').collect { it.trim() }
                                     echo "$customers"
                                     // Add your actions for Server 1 here
