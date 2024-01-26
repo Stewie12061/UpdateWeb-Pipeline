@@ -119,6 +119,17 @@ pipeline {
     }
 
     stages {
+        // state('Zip Folder Publish'){
+        //     steps{
+        //         script{
+        //             def zipPublish = '''
+        //                 $source = "$env:SOURCE_PATH"
+        //                 Compress-Archive -Path "$source\\*" -DestinationPath "$source.zip" -Force
+        //             '''
+        //             powershell(script: zipPublish)
+        //         }
+        //     }
+        // }
         stage('Push source to Server') {
             steps {
                 script {
@@ -127,19 +138,15 @@ pipeline {
                     for(webServer in webServers){
                         builders[webServer] = {
                             stage("Push source web to Server ${webServer}") {
-                                def zipPublish = '''
-                                    $source = "$env:SOURCE_PATH"
-                                    Compress-Archive -Path "$source\\*" -DestinationPath "$source.zip" -Force
-                                '''
-                                powershell(script: zipPublish)
-                                // remote = [:]
-                                // remote.host = "${webServer}"
-                                // remote.allowAnyHosts = true
-                                // remote.failOnError = true
-                                // remote.user = "${env:USERNAME}"
-                                // remote.password = "${env:PASSWORD}"
+                                
+                                remote = [:]
+                                remote.host = "${webServer}"
+                                remote.allowAnyHosts = true
+                                remote.failOnError = true
+                                remote.user = "${env:USERNAME}"
+                                remote.password = "${env:PASSWORD}"
 
-                                // sshPut remote: remote, from: "${env:SOURCE_PATH}", into: "${env:DESTINATION_PATH_PATH}"
+                                sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH_PATH}"
                             }
                         }
                     }
