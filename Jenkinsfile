@@ -149,13 +149,14 @@ pipeline {
                                 def username = "${env:USERNAME}"
                                 def password = "${env:PASSWORD}"
 
-                                def remote = [:]
-                                remote.name = remoteName
-                                remote.host = webServer
-                                remote.allowAnyHosts = true
-                                remote.failOnError = true
-                                remote.user = username
-                                remote.password = password
+                                def remote = [
+                                    name: remoteName,
+                                    host: webServer,
+                                    allowAnyHosts: true,
+                                    failOnError: true,
+                                    user: username,
+                                    password: password
+                                ]
 
                                 sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
                             }
