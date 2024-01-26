@@ -140,6 +140,7 @@ pipeline {
                             stage("Push source web to Server ${webServer}") {
                                 
                                 remote = [:]
+                                remote.name = "${webServer}"
                                 remote.host = "${webServer}"
                                 remote.allowAnyHosts = true
                                 remote.failOnError = true
