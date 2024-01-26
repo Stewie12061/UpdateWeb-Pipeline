@@ -115,21 +115,26 @@ pipeline {
         string(name: 'USERNAME', defaultValue: 'stewie12061', description: 'User login to server')
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
+        string(name: 'DESTINATION_PATH', defaultValue: 'D:\\', description: 'Path to destination server')
     }
 
     stages {
-        stage('Update source web to server') {
+        stage('Push source to Server') {
             steps {
                 script {
                     def webServers = params.WEB_SERVER_LIST.split(',')
                     def builders = [:]
                     for(webServer in webServers){
                         builders[webServer] = {
-                            stage("Update web on Server ${webServer}") {
-                                echo "Running stage for Server ${webServer}"
-                                def customers = params."SERVER_${webServer}_CUSTOMER_LIST".split(',').collect { it.trim() }
-                                echo "$customers"
-                                // Add your actions for Server 1 here
+                            stage("Push source web to Server ${webServer}") {
+                                remote = [:]
+                                remote.host = "${webServer}"
+                                remote.allowAnyHosts = true
+                                remote.failOnError = true
+                                remote.user = "${env:USERNAME}"
+                                remote.password = "${env:PASSWORD}"
+
+                                sshPut remote: remote, from: "${env:SOURCE_PATH}", into: "${env:DESTINATION_PATH_PATH}"
                             }
                         }
                     }
@@ -137,7 +142,23 @@ pipeline {
                 }
             }
         }
-
+        // stage('Update source web to server') {
+        //     steps {
+        //         script {
+        //             def webServers = params.WEB_SERVER_LIST.split(',')
+        //             def builders = [:]
+        //             for(webServer in webServers){
+        //                 builders[webServer] = {
+        //                     stage("Update web on Server ${webServer}") {
+        //                         echo "Running stage for Server ${webServer}"
+        //                         def customers = params."SERVER_${webServer}_CUSTOMER_LIST".split(',').collect { it.trim() }
+        //                     }
+        //                 }
+        //             }
+        //             parallel builders
+        //         }
+        //     }
+        // }
     }
 
     post {
