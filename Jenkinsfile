@@ -134,6 +134,7 @@ pipeline {
             steps {
                 script {
                     String[] webServers = params.WEB_SERVER_LIST.split(',')
+                    def builders = [:]
                     for(webServer in webServers){
                         echo "$webServer"
                         def remoteName = ""
@@ -154,28 +155,33 @@ pipeline {
                         def password = "${env:PASSWORD}"
 
                         def copyscript = """
-                                # Connect to the network drive
-                                net use $drive: \\\\$webServer\\${env:DESTINATION_PATH} /user:$remoteName\\$username $password
+                            # Connect to the network drive
+                            net use $drive: \\\\$webServer\\${env:DESTINATION_PATH} /user:$remoteName\\$username $password
 
-                                # Execute robocopy and wait for it to finish
-                                Start-Process robocopy -ArgumentList @(
-                                    "${env:SOURCE_PATH}",
-                                    "$drive:\\",
-                                    "/E",
-                                    "/MIR",
-                                    "/MT:8",
-                                    "/np",
-                                    "/ndl",
-                                    "/nfl",
-                                    "/nc",
-                                    "/ns"
-                                ) -Wait
+                            # Execute robocopy and wait for it to finish
+                            Start-Process robocopy -ArgumentList @(
+                                "${env:SOURCE_PATH}.zip",
+                                "$drive:\\",
+                                "/E",
+                                "/MIR",
+                                "/MT:8",
+                                "/np",
+                                "/ndl",
+                                "/nfl",
+                                "/nc",
+                                "/ns"
+                            ) -Wait
 
-                                # Disconnect from the network drive
-                                net use $drive: /delete
-                            """
+                            # Disconnect from the network drive
+                            net use $drive: /delete
+                        """
+
+                        builders[webServer] = {
+                            
                             powershell(script: copyscript)
+                        }
                     }
+                    parallel builders
                 }
             }
         }
