@@ -119,7 +119,7 @@ pipeline {
     }
 
     stages {
-        state('Zip Folder Publish'){
+        stage('Zip Folder Publish'){
             steps{
                 script{
                     def zipPublish = '''
