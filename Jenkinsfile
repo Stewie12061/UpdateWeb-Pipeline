@@ -140,9 +140,11 @@ pipeline {
                         def remoteName = ""
                         if(webServer.equals("116.118.95.121")){
                             remoteName = "web-server"
-                        }if(webServer.equals("103.245.249.218")){
+                        }
+                        if(webServer.equals("103.245.249.218")){
                             remoteName = "web-server-2"
-                        }if(webServer.equals("10.0.0.1")){
+                        }
+                        if(webServer.equals("10.0.0.1")){
                             remoteName = "test"
                         }
                         builders[webServer] = {
