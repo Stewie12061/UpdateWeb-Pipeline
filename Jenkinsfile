@@ -115,78 +115,75 @@ pipeline {
         string(name: 'USERNAME', defaultValue: 'stewie12061', description: 'User login to server')
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
-        string(name: 'DESTINATION_PATH', defaultValue: 'Publish', description: 'Path folder on remote server(without the drive letter)')
+        string(name: 'DESTINATION_NAME', defaultValue: 'Publish', description: 'Folder publish name shared on remote server')
     }
 
     stages {
-        // state('Zip Folder Publish'){
-        //     steps{
-        //         script{
-        //             def zipPublish = '''
-        //                 $source = "$env:SOURCE_PATH"
-        //                 Compress-Archive -Path "$source\\*" -DestinationPath "$source.zip" -Force
-        //             '''
-        //             powershell(script: zipPublish)
-        //         }
-        //     }
-        // }
-        stage('Push source to Server') {
-            steps {
-                script {
-                    String[] webServers = params.WEB_SERVER_LIST.split(',')
-                    def builders = [:]
-                    for(webServer in webServers){
-                        echo "$webServer"
-                        def remoteName = ""
-                        def drive = ""
-                        if(webServer.equals("116.118.95.121")){
-                            remoteName = "web-server"
-                            drive = "Z"
-                        }
-                        if(webServer.equals("103.245.249.218")){
-                            remoteName = "web-server-2"
-                            drive = "Y"
-                        }
-                        if(webServer.equals("10.0.0.1")){
-                            remoteName = "test"
-                            drive = "X"
-                        }
-                        def username = "${env:USERNAME}"
-                        def password = "${env:PASSWORD}"
-
-                        def copyscript = """
-                            # Connect to the network drive
-                            net use $drive: \\\\$webServer\\${env:DESTINATION_PATH} /user:$remoteName\\$username $password
-
-                            # Execute robocopy and wait for it to finish
-                            Start-Process robocopy -ArgumentList @(
-                                "${env:SOURCE_PATH}.zip",
-                                "$drive:\\",
-                                "/E",
-                                "/MIR",
-                                "/MT:8",
-                                "/np",
-                                "/ndl",
-                                "/nfl",
-                                "/nc",
-                                "/ns"
-                            ) -Wait
-
-                            # Disconnect from the network drive
-                            net use $drive: /delete
-                        """
-
-                        builders[webServer] = {
-                            echo "Running PowerShell script on $webServer"
-                            def psOutput = powershell(script: copyscript, returnStatus: true)
-                            echo "PowerShell Output:"
-                            echo psOutput
-                        }
-                    }
-                    parallel builders
+        state('Zip Folder Publish'){
+            steps{
+                script{
+                    def zipPublish = '''
+                        $source = "$env:SOURCE_PATH"
+                        Compress-Archive -Path "$source\\*" -DestinationPath "PUBLISH.zip" -Force
+                    '''
+                    powershell(script: zipPublish)
                 }
             }
         }
+        // stage('Push source to Server') {
+        //     steps {
+        //         script {
+        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
+        //             def builders = [:]
+        //             for(webServer in webServers){
+        //                 echo "$webServer"
+        //                 def remoteName = ""
+        //                 def drive = ""
+        //                 if(webServer.equals("116.118.95.121")){
+        //                     remoteName = "web-server"
+        //                     drive = "Z"
+        //                 }
+        //                 if(webServer.equals("103.245.249.218")){
+        //                     remoteName = "web-server-2"
+        //                     drive = "Y"
+        //                 }
+        //                 if(webServer.equals("10.0.0.1")){
+        //                     remoteName = "test"
+        //                     drive = "X"
+        //                 }
+        //                 def username = "${env:USERNAME}"
+        //                 def password = "${env:PASSWORD}"
+
+        //                 def copyscript = """
+        //                     # Connect to the network drive
+        //                     net use $drive: \\\\$webServer\\${env:DESTINATION_NAME} /user:$remoteName\\$username $password
+
+        //                     # Execute robocopy and wait for it to finish
+        //                     Start-Process robocopy -ArgumentList @(
+        //                         "${env:SOURCE_PATH}",
+        //                         "$drive:\\",
+        //                         "PUBLISH.zip",
+        //                         "/E",
+        //                         "/MT:8",
+        //                         "/np",
+        //                         "/ndl",
+        //                         "/nfl",
+        //                         "/nc",
+        //                         "/ns"
+        //                     ) -Wait
+
+        //                     # Disconnect from the network drive
+        //                     net use $drive: /delete
+        //                 """
+
+        //                 builders[webServer] = {
+        //                     powershell(script: "$copyscript")
+        //                 }
+        //             }
+        //             parallel builders
+        //         }
+        //     }
+        // }
     }
 
 
