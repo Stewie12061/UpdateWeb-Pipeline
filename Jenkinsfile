@@ -160,7 +160,7 @@ pipeline {
                                 # Execute robocopy and wait for it to finish
                                 Start-Process robocopy -ArgumentList @(
                                     "${env:SOURCE_PATH}",
-                                    "Z:\\",
+                                    "$drive:\\",
                                     "/E",
                                     "/MIR",
                                     "/MT:8",
@@ -172,7 +172,7 @@ pipeline {
                                 ) -Wait
 
                                 # Disconnect from the network drive
-                                net use Z: /delete
+                                net use $drive: /delete
                             """
                             powershell(script: copyscript)
                     }
