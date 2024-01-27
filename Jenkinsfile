@@ -177,7 +177,10 @@ pipeline {
                         """
 
                         builders[webServer] = {
-                            powershell(script: "$copyscript")
+                            echo "Running PowerShell script on $webServer"
+                            def psOutput = powershell(script: copyscript, returnStatus: true)
+                            echo "PowerShell Output:"
+                            echo psOutput
                         }
                     }
                     parallel builders
