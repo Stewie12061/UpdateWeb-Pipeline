@@ -160,6 +160,7 @@ pipeline {
                                     "$env:SOURCE_PATH",
                                     "Z:\\",
                                     "/E",
+                                    "/MIR",
                                     "/MT:8",
                                     "/np",
                                     "/ndl",
