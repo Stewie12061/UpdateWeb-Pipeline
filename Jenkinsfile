@@ -177,8 +177,7 @@ pipeline {
                         """
 
                         builders[webServer] = {
-                            echo "$copyscript"
-                            //powershell(script: "$copyscript")
+                            powershell(script: "$copyscript")
                         }
                     }
                     parallel builders
