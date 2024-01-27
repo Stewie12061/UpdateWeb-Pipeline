@@ -153,7 +153,7 @@ pipeline {
                         builders[webServer] = {
                             def copyscript = '''
                                 # Connect to the network drive
-                                net use Z: \\$webServer\\$env:DESTINATION_PATH /user:$remoteName\\$username $password
+                                net use Z: \\\\$webServer\\$env:DESTINATION_PATH /user:$remoteName\\$username $password
 
                                 # Execute robocopy and wait for it to finish
                                 Start-Process robocopy -ArgumentList @(
