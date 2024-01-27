@@ -163,7 +163,7 @@ pipeline {
                             sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
                         }
                     }
-                    // parallel builders
+                    parallel builders
                 }
             }
         }
