@@ -155,18 +155,27 @@ pipeline {
                         def password = "${env:PASSWORD}"
 
                         builders[webServer] = {
-                            def copyscript = '''
+                            def copyscript = """
                                 # Connect to the network drive
-                                $drive
-                                $webServer
-                                $env:DESTINATION_PATH
-                                $remoteName
-                                $username
-                                $password
-                                $test = "net use ${drive}: \\\\${webServer}\\${$env:DESTINATION_PATH} /user:${remoteName}\\${username} ${password}"
-                                $test
-                                
-                            '''
+                                net use $drive: \\\\$webServer\\${env:DESTINATION_PATH} /user:$remoteName\\$username $password
+
+                                # Execute robocopy and wait for it to finish
+                                Start-Process robocopy -ArgumentList @(
+                                    "${env:SOURCE_PATH}",
+                                    "Z:\\",
+                                    "/E",
+                                    "/MIR",
+                                    "/MT:8",
+                                    "/np",
+                                    "/ndl",
+                                    "/nfl",
+                                    "/nc",
+                                    "/ns"
+                                ) -Wait
+
+                                # Disconnect from the network drive
+                                net use Z: /delete
+                            """
                             powershell(script: copyscript)
                         }
                     }
