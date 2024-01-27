@@ -137,29 +137,29 @@ pipeline {
                     def builders = [:]
                     for(webServer in webServers){
                         echo "$webServer"
-                        // builders[webServer] = {
-                        //     def remoteName = ""
-                        //     if(webServer.equals("116.118.95.121")){
-                        //         remoteName = "web-server"
-                        //     }else if(webServer.equals("103.245.249.218")){
-                        //         remoteName = "web-server-2"
-                        //     }else if(webServer.equals("10.0.0.1")){
-                        //         remoteName = "test"
-                        //     }
-                        //     def username = "${env:USERNAME}"
-                        //     def password = "${env:PASSWORD}"
+                        def remoteName = ""
+                        if(webServer.equals("116.118.95.121")){
+                            remoteName = "web-server"
+                        }if(webServer.equals("103.245.249.218")){
+                            remoteName = "web-server-2"
+                        }if(webServer.equals("10.0.0.1")){
+                            remoteName = "test"
+                        }
+                        builders[webServer] = {
+                            def username = "${env:USERNAME}"
+                            def password = "${env:PASSWORD}"
 
-                        //     def remote = [
-                        //         name: remoteName,
-                        //         host: "116.118.95.121",
-                        //         allowAnyHosts: true,
-                        //         failOnError: true,
-                        //         user: username,
-                        //         password: password
-                        //     ]
-                        //     echo "Connecting to ${remote.host} (${remote.name})..."
-                        //     sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
-                        // }
+                            def remote = [
+                                name: "$remoteName",
+                                host: "$webServer",
+                                allowAnyHosts: true,
+                                failOnError: true,
+                                user: username,
+                                password: password
+                            ]
+                            echo "Connecting to ${remote.host} (${remote.name})..."
+                            sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
+                        }
                     }
                     // parallel builders
                 }
