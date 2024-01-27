@@ -190,6 +190,7 @@ pipeline {
     post {
         always {
             echo 'Finished'
+            cleanWs()
         }
         success {
             echo 'Succeeded!'
