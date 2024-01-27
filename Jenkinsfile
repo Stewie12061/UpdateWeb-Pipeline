@@ -137,7 +137,6 @@ pipeline {
                     def builders = [:]
                     for(webServer in webServers){
                         builders[webServer] = {
-                            stage("Push source web to Server ${webServer}") {
                                 def remoteName = ""
                                 if(webServer.equals("116.118.95.121")){
                                     remoteName = "web-server"
