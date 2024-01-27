@@ -134,7 +134,6 @@ pipeline {
             steps {
                 script {
                     String[] webServers = params.WEB_SERVER_LIST.split(',')
-                    def builders = [:]
                     for(webServer in webServers){
                         echo "$webServer"
                         def remoteName = ""
@@ -154,8 +153,7 @@ pipeline {
                         def username = "${env:USERNAME}"
                         def password = "${env:PASSWORD}"
 
-                        builders[webServer] = {
-                            def copyscript = """
+                        def copyscript = """
                                 # Connect to the network drive
                                 net use $drive: \\\\$webServer\\${env:DESTINATION_PATH} /user:$remoteName\\$username $password
 
@@ -177,9 +175,7 @@ pipeline {
                                 net use Z: /delete
                             """
                             powershell(script: copyscript)
-                        }
                     }
-                    parallel builders
                 }
             }
         }
