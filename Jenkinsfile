@@ -147,19 +147,19 @@ pipeline {
                         if(webServer.equals("10.0.0.1")){
                             remoteName = "test"
                         }
-                        builders[webServer] = {
-                            def username = "${env:USERNAME}"
-                            def password = "${env:PASSWORD}"
+                        def username = "${env:USERNAME}"
+                        def password = "${env:PASSWORD}"
 
-                            def remote = [
-                                name: "$remoteName",
-                                host: "$webServer",
-                                allowAnyHosts: true,
-                                failOnError: true,
-                                user: username,
-                                password: password
-                            ]
-                            echo "Connecting to ${remote.host} (${remote.name})..."
+                        def remote = [
+                            name: remoteName,
+                            host: webServer,
+                            allowAnyHosts: true,
+                            failOnError: true,
+                            user: username,
+                            password: password
+                        ]
+                        echo "Connecting to ${remote.host} (${remote.name})..."
+                        builders[webServer] = {
                             sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
                         }
                     }
