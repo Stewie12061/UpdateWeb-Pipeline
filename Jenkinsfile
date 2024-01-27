@@ -150,17 +150,28 @@ pipeline {
                         def username = "${env:USERNAME}"
                         def password = "${env:PASSWORD}"
 
-                        def remote = [
-                            name: remoteName,
-                            host: webServer,
-                            allowAnyHosts: true,
-                            failOnError: true,
-                            user: username,
-                            password: password
-                        ]
-                        echo "Connecting to ${remote.host} (${remote.name})..."
                         builders[webServer] = {
-                            sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
+                            def copyscript = '''
+                                # Connect to the network drive
+                                net use Z: \\$webServer\\$env:DESTINATION_PATH /user:$remoteName\\$username $password
+
+                                # Execute robocopy and wait for it to finish
+                                Start-Process robocopy -ArgumentList @(
+                                    "$env:SOURCE_PATH",
+                                    "Z:\\",
+                                    "/E",
+                                    "/MT:8",
+                                    "/np",
+                                    "/ndl",
+                                    "/nfl",
+                                    "/nc",
+                                    "/ns"
+                                ) -Wait
+
+                                # Disconnect from the network drive
+                                net use Z: /delete
+                            '''
+                            powershell(script: copyscript)
                         }
                     }
                     parallel builders
