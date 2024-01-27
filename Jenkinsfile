@@ -130,60 +130,60 @@ pipeline {
                 }
             }
         }
-        // stage('Push source to Server') {
-        //     steps {
-        //         script {
-        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
-        //             def builders = [:]
-        //             for(webServer in webServers){
-        //                 echo "$webServer"
-        //                 def remoteName = ""
-        //                 def drive = ""
-        //                 if(webServer.equals("116.118.95.121")){
-        //                     remoteName = "web-server"
-        //                     drive = "Z"
-        //                 }
-        //                 if(webServer.equals("103.245.249.218")){
-        //                     remoteName = "web-server-2"
-        //                     drive = "Y"
-        //                 }
-        //                 if(webServer.equals("10.0.0.1")){
-        //                     remoteName = "test"
-        //                     drive = "X"
-        //                 }
-        //                 def username = "${env:USERNAME}"
-        //                 def password = "${env:PASSWORD}"
+        stage('Push source to Server') {
+            steps {
+                script {
+                    String[] webServers = params.WEB_SERVER_LIST.split(',')
+                    def builders = [:]
+                    for(webServer in webServers){
+                        echo "$webServer"
+                        def remoteName = ""
+                        def drive = ""
+                        if(webServer.equals("116.118.95.121")){
+                            remoteName = "web-server"
+                            drive = "Z"
+                        }
+                        if(webServer.equals("103.245.249.218")){
+                            remoteName = "web-server-2"
+                            drive = "Y"
+                        }
+                        if(webServer.equals("10.0.0.1")){
+                            remoteName = "test"
+                            drive = "X"
+                        }
+                        def username = "${env:USERNAME}"
+                        def password = "${env:PASSWORD}"
 
-        //                 def copyscript = """
-        //                     # Connect to the network drive
-        //                     net use $drive: \\\\$webServer\\${env:DESTINATION_NAME} /user:$remoteName\\$username $password
+                        def copyscript = """
+                            # Connect to the network drive
+                            net use $drive: \\\\$webServer\\${env:DESTINATION_NAME} /user:$remoteName\\$username $password
 
-        //                     # Execute robocopy and wait for it to finish
-        //                     Start-Process robocopy -ArgumentList @(
-        //                         "${env:SOURCE_PATH}",
-        //                         "$drive:\\",
-        //                         "PUBLISH.zip",
-        //                         "/E",
-        //                         "/MT:8",
-        //                         "/np",
-        //                         "/ndl",
-        //                         "/nfl",
-        //                         "/nc",
-        //                         "/ns"
-        //                     ) -Wait
+                            # Execute robocopy and wait for it to finish
+                            Start-Process robocopy -ArgumentList @(
+                                "${env:WORKSPACE}",
+                                "$drive:\\",
+                                "PUBLISH.zip",
+                                "/E",
+                                "/MT:8",
+                                "/np",
+                                "/ndl",
+                                "/nfl",
+                                "/nc",
+                                "/ns"
+                            ) -Wait
 
-        //                     # Disconnect from the network drive
-        //                     net use $drive: /delete
-        //                 """
+                            # Disconnect from the network drive
+                            net use $drive: /delete
+                        """
 
-        //                 builders[webServer] = {
-        //                     powershell(script: "$copyscript")
-        //                 }
-        //             }
-        //             parallel builders
-        //         }
-        //     }
-        // }
+                        builders[webServer] = {
+                            powershell(script: "$copyscript")
+                        }
+                    }
+                    parallel builders
+                }
+            }
+        }
     }
 
 
