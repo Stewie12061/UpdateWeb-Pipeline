@@ -150,13 +150,13 @@ pipeline {
 
                             def remote = [
                                 name: remoteName,
-                                host: webServer,
+                                host: "116.118.95.121",
                                 allowAnyHosts: true,
                                 failOnError: true,
                                 user: username,
                                 password: password
                             ]
-
+                            echo "Connecting to ${remote.host} (${remote.name})..."
                             sshPut remote: remote, from: "${env:SOURCE_PATH}.zip", into: "${env:DESTINATION_PATH}"
                         }
                     }
