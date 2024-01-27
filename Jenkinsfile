@@ -163,7 +163,7 @@ pipeline {
                                 $remoteName
                                 $username
                                 $password
-                                $test = "net use $drive: \\\\$webServer\\$env:DESTINATION_PATH /user:$remoteName\\$username $password"
+                                $test = "net use ${drive}: \\\\${webServer}\\${$env:DESTINATION_PATH} /user:${remoteName}\\${username} ${password}"
                                 $test
                                 
                             '''
