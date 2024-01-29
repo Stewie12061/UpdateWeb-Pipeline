@@ -238,7 +238,7 @@ pipeline {
                                     Write-Host "yolo \$customerFolder"
                                     
                                 }
-                            } -ArgumentList \$customers
+                            } -ArgumentList '${customers}'
                             Remove-PSSession \$session
                         """
                         builders[webServer] = {
