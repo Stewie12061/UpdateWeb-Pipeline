@@ -222,30 +222,31 @@ pipeline {
                     for(webServer in webServers){
                         def customer = "SERVER_${webServer}_CUSTOMER_LIST"
                         def customers = params."${customer}".split(',')
-                        def remotePSSession = """
-                            \$uri = "https://${webServer}:5986"
-                            \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
-                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
-
-                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
-
-                            Invoke-Command -Session \$session -ScriptBlock {
-                                # Get folder names
-                                \$customerList = '${customers}'
-                                foreach (\$customer in \$customerList) {
-                                    Write-Host "yolo \$customer"
-                                }
-                                
-                            }
-                            Remove-PSSession \$session
-                        """
                         echo "$customers"
-                        builders[webServer] = {
-                            powershell(script: remotePSSession)
-                        }
+
+                        // def remotePSSession = """
+                        //     \$uri = "https://${webServer}:5986"
+                        //     \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
+                        //     \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
+
+                        //     \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                        //     \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+
+                        //     Invoke-Command -Session \$session -ScriptBlock {
+                        //         # Get folder names
+                        //         \$customerList = '${customers}'
+                        //         foreach (\$customer in \$customerList) {
+                        //             Write-Host "yolo \$customer"
+                        //         }
+                                
+                        //     }
+                        //     Remove-PSSession \$session
+                        // """
+                        // builders[webServer] = {
+                        //     powershell(script: remotePSSession)
+                        // }
                     }
-                    parallel builders
+                    //parallel builders
                     
                 }
             }
