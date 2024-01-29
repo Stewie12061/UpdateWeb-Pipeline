@@ -222,11 +222,13 @@ pipeline {
                     for(webServer in webServers){
                         def remotePSSession = """
                             def uri = "https://${webServer}:5986"
-                            $securepassword = "ConvertTo-SecureString -String ${password} -AsPlainText -Force"
-                            $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ${username}, ${securepassword}
+                            def uri = "https://${webServer}:5986"
+                            def securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
+                            def cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
 
-                            $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            $session = New-PSSession -ConnectionUri $uri -Credential $cred -SessionOption $sessionOption
+                            def sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            def session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+
                             Invoke-Command -Session $session -ScriptBlock {
                                 # Get folder names
                                 $webSubfolders = Get-ChildItem -Path "D:\\ERP9" -Directory | ForEach-Object {
