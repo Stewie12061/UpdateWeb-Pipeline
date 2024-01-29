@@ -198,7 +198,7 @@ pipeline {
                             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
                             Invoke-Command -Session \$session -ScriptBlock {
-                                Expand-Archive -Path "D:\\Publish\\PUBLISH.zip" -DestinationPath "D:\\Publish\\PUBLISH" -Force
+                                Expand-Archive -Path "D:\\Publish\\PUBLISH.zip" -OutputPath "D:\\Publish\\PUBLISH" -Force
                             }
                             Remove-PSSession \$session
                         """
