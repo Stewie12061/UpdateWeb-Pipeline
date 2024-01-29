@@ -229,7 +229,7 @@ pipeline {
                             def sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             def session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
 
-                            Invoke-Command -Session $session -ScriptBlock {
+                            Invoke-Command -Session \$session -ScriptBlock {
                                 # Get folder names
                                 $webSubfolders = Get-ChildItem -Path "D:\\ERP9" -Directory | ForEach-Object {
                                     \$folderName = \$_.Name
