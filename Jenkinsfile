@@ -239,7 +239,7 @@ pipeline {
                                 }
                                 $webSubfolders
                             }
-                            Remove-PSSession $session
+                            Remove-PSSession \$session
                         """
 
                         builders[webServer] = {
