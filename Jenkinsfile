@@ -221,7 +221,7 @@ pipeline {
                     def builders = [:]
                     for(webServer in webServers){
                         def customer = "SERVER_${webServer}_CUSTOMER_LIST"
-                        String[] customers = "${customer}".split(',')
+                        String[] customers = params."${customer}".split(',')
                         def remotePSSession = """
                             \$uri = "https://${webServer}:5986"
                             \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
@@ -236,6 +236,7 @@ pipeline {
                                 Write-Host "\$customerList"
                                 foreach (\$customer in \$customerList) {
                                     Write-Host "\$customer"
+                                    
                                 }
                                 
                             }
