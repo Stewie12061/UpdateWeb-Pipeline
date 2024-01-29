@@ -224,7 +224,7 @@ pipeline {
                         def customers = params."${customer}"
 
                         def remotePSSession = """
-                            \$customers = "${customers}"
+                            \$customers = "${customers}" -split ','
                             \$uri = "https://${webServer}:5986"
                             \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
                             \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
@@ -234,10 +234,11 @@ pipeline {
 
                             Invoke-Command -Session \$session -ScriptBlock {
                                 param(\$customers)
-                                Write-Host "testt \$customers"
-                                foreach (\$customerFolder in \$customers) {
-                                    Write-Host "yolo \$customerFolder"
+                                foreach (\$customer in \$customers) {
+                                    Write-Host "Processing customer: \$customer"
+                                    # Add your logic for each customer here
                                 }
+                                
                             } -ArgumentList \$customers
                             Remove-PSSession \$session
                         """
