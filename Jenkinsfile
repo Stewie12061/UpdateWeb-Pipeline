@@ -233,14 +233,11 @@ pipeline {
                             Invoke-Command -Session \$session -ScriptBlock {
                                 # Get folder names
                                 \$customerList = '${customers}'
-                                \$webSubfolders = Get-ChildItem -Path "D:\\ERP9" -Directory | ForEach-Object {
-                                    \$folderName = \$_.Name
-                                    if (\$folderName -in \$customerList) {
-                                        \$folderName
-                                    }
-                                }
                                 Write-Host "\$customerList"
-                                Write-Host "\$webSubfolders"
+                                foreach (\$customer in \$customerList) {
+                                    Write-Host "\$customer"
+                                }
+                                
                             }
                             Remove-PSSession \$session
                         """
