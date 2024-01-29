@@ -231,13 +231,13 @@ pipeline {
 
                             Invoke-Command -Session \$session -ScriptBlock {
                                 # Get folder names
-                                $webSubfolders = Get-ChildItem -Path "D:\\ERP9" -Directory | ForEach-Object {
+                                \$webSubfolders = Get-ChildItem -Path "D:\\ERP9" -Directory | ForEach-Object {
                                     \$folderName = \$_.Name
                                     if (\$folderName -in \$env:WEB_SERVER_LIST.split(',')) {
                                         \$folderName
                                     }
                                 }
-                                $webSubfolders
+                                \$webSubfolders
                             }
                             Remove-PSSession \$session
                         """
