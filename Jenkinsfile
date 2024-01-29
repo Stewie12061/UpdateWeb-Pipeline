@@ -1,5 +1,4 @@
 properties([
-    string(description: 'Fill agent to run', name: 'build_agent')
     parameters([
         [$class: 'ChoiceParameter',
             choiceType: 'PT_CHECKBOX', 
@@ -112,6 +111,7 @@ pipeline {
     }
 
     parameters {
+        string(description: 'Fill agent to run', name: 'build_agent')
         string(name: 'USERNAME', defaultValue: 'stewie12061', description: 'User login to server')
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
