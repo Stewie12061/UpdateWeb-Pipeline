@@ -224,7 +224,7 @@ pipeline {
                         def customers = params."${customer}"
 
                         def remotePSSession = """
-                            \$customers = "${customers}"
+                            \$customersList = "${customers}" -split ','
                             Write-Host "Web Server: ${webServer}, Customers: \$customers"
                             \$uri = "https://${webServer}:5986"
                             \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
@@ -234,11 +234,13 @@ pipeline {
                             \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
 
                             Invoke-Command -Session \$session -ScriptBlock {
-                                param(\$customers)
+                                param(\$customersList)
 
-                                \$customers | ForEach-Object {Write-Host \$_}
+                                foreach (\$customer in \$customersList) {
+                                    Write-Host "Processing customer: \$customer"
+                                }
                                 
-                            } -ArgumentList \$customers
+                            } -ArgumentList \$customersList
                             Remove-PSSession \$session
                         """
                         builders[webServer] = {
