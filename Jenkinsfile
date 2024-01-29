@@ -235,10 +235,8 @@ pipeline {
 
                             Invoke-Command -Session \$session -ScriptBlock {
                                 param(\$customers)
-                                foreach (\$customer in \$customers) {
-                                    Write-Host "Processing customer: \$customer"
-                                    # Add your logic for each customer here
-                                }
+
+                                \$customers | ForEach-Object {Write-Host \$_}
                                 
                             } -ArgumentList \$customers
                             Remove-PSSession \$session
