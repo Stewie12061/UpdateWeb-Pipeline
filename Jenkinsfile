@@ -233,16 +233,14 @@ pipeline {
                             Invoke-Command -Session \$session -ScriptBlock {
                                 # Get folder names
                                 \$customerList = '${customers}'
-                                Write-Host "\$customerList"
                                 foreach (\$customer in \$customerList) {
-                                    Write-Host "\$customer"
-                                    
+                                    Write-Host "yolo \$customer"
                                 }
                                 
                             }
                             Remove-PSSession \$session
                         """
-
+                        echo "$customers"
                         builders[webServer] = {
                             powershell(script: remotePSSession)
                         }
