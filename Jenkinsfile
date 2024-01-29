@@ -221,7 +221,7 @@ pipeline {
                     def builders = [:]
                     for(webServer in webServers){
                         def remotePSSession = """
-                            $uri = "https://$webServer:5986"
+                            def uri = "https://${webServer}:5986"
                             $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
                             $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
 
