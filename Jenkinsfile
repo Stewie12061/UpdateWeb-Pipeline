@@ -221,7 +221,7 @@ pipeline {
                     def builders = [:]
                     for(webServer in webServers){
                         def customer = "SERVER_${webServer}_CUSTOMER_LIST"
-                        def customers = params."${customer}".split(',')
+                        def customers = params."${customer}"
 
                         def remotePSSession = """
                             \$customers = ${customers}
@@ -238,7 +238,7 @@ pipeline {
                                 foreach (\$customerFolder in \$customers) {
                                     Write-Host "yolo \$customerFolder"
                                 }
-                            } -ArgumentList (\$customers -join ',')
+                            } -ArgumentList \$customers
                             Remove-PSSession \$session
                         """
                         builders[webServer] = {
