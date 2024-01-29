@@ -233,7 +233,7 @@ pipeline {
 
                             Invoke-Command -Session \$session -ScriptBlock {
                                 param(\$customers)
-
+                                Write-Host "testt \$customers"
                                 foreach (\$customerFolder in \$customers) {
                                     Write-Host "yolo \$customerFolder"
                                     
