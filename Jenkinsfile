@@ -234,9 +234,9 @@ pipeline {
                             \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
 
                             Invoke-Command -Session \$session -ScriptBlock {
-                                param(\$customersList)
-                                Write-Host "Customers in invoke: \$customersList"
-                                foreach (\$customer in \$customersList) {
+                                param(\$innerCustomersList)
+                                Write-Host "Customers in invoke: \$innerCustomersList"
+                                foreach (\$customer in \$innerCustomersList) {
                                     Write-Host "Processing customer: \$customer"
                                 }
                                 
