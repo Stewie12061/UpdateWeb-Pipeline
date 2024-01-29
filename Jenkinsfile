@@ -225,7 +225,7 @@ pipeline {
 
                         def remotePSSession = """
                             \$customersList = "${customers}" -split ','
-                            Write-Host "Web Server: ${webServer}, Customers: \$customers"
+                            Write-Host "Web Server: ${webServer}, Customers: \$customersList"
                             \$uri = "https://${webServer}:5986"
                             \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
                             \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
@@ -235,7 +235,7 @@ pipeline {
 
                             Invoke-Command -Session \$session -ScriptBlock {
                                 param(\$customersList)
-
+                                Write-Host "Customers in invoke: \$customersList"
                                 foreach (\$customer in \$customersList) {
                                     Write-Host "Processing customer: \$customer"
                                 }
