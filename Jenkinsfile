@@ -182,37 +182,7 @@ pipeline {
         //         }
         //     }
         // }
-        // stage('Unzip Folder Publish'){
-        //     steps{
-        //         script{
-        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
-        //             def username = "${env:USERNAME}"
-        //             def password = "${env:PASSWORD}"
-        //             def builders = [:]
-        //             for(webServer in webServers){
-        //                 def remotePSSession = """
-        //                     $uri = "https://$webServer:5986"
-        //                     $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
-        //                     $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
-
-        //                     $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-        //                     $session = New-PSSession -ConnectionUri $uri -Credential $cred -SessionOption $sessionOption
-        //                     Invoke-Command -Session $session -ScriptBlock {
-        //                         Expand-Archive -Path "D:\\Publish\\PUBLISH.zip" -DestinationPath "D:\\Publish\\PUBLISH" -Force
-        //                     }
-        //                     Remove-PSSession $session
-        //                 """
-
-        //                 builders[webServer] = {
-        //                     powershell(script: remotePSSession)
-        //                 }
-        //             }
-        //             parallel builders
-                    
-        //         }
-        //     }
-        // }
-        stage('Sync Publish folder'){
+        stage('Unzip Folder Publish'){
             steps{
                 script{
                     String[] webServers = params.WEB_SERVER_LIST.split(',')
@@ -220,30 +190,19 @@ pipeline {
                     def password = "${env:PASSWORD}"
                     def builders = [:]
                     for(webServer in webServers){
-                        def customer = "SERVER_${webServer}_CUSTOMER_LIST"
-                        def customers = params."${customer}"
-
                         def remotePSSession = """
-                            \$customersList = "${customers}"
-                            Write-Host "Web Server: ${webServer}, Customers: \$customersList"
-                            \$uri = "https://${webServer}:5986"
-                            \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
-                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
+                            $uri = "https://$webServer:5986"
+                            $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+                            $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $securepassword
 
-                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
-
-                            Invoke-Command -Session \$session -ScriptBlock {
-                                param(\$innerCustomersList)
-
-                                Write-Host "Customers in invoke: \$innerCustomersList -split ','"
-                                foreach (\$customer in \$innerCustomersList -split ',') {
-                                    Write-Host "Processing customer: \$customer"
-                                }
-                                
-                            } -ArgumentList \$customersList
-                            Remove-PSSession \$session
+                            $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            $session = New-PSSession -ConnectionUri $uri -Credential $cred -SessionOption $sessionOption
+                            Invoke-Command -Session $session -ScriptBlock {
+                                Expand-Archive -Path "D:\\Publish\\PUBLISH.zip" -DestinationPath "D:\\Publish\\PUBLISH" -Force
+                            }
+                            Remove-PSSession $session
                         """
+
                         builders[webServer] = {
                             powershell(script: remotePSSession)
                         }
@@ -253,6 +212,45 @@ pipeline {
                 }
             }
         }
+        // stage('Sync Publish folder'){
+        //     steps{
+        //         script{
+        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
+        //             def username = "${env:USERNAME}"
+        //             def password = "${env:PASSWORD}"
+        //             def builders = [:]
+        //             for(webServer in webServers){
+        //                 def customer = "SERVER_${webServer}_CUSTOMER_LIST"
+        //                 def customers = params."${customer}"
+
+        //                 def remotePSSession = """
+        //                     \$customersList = "${customers}"
+        //                     Write-Host "Web Server: ${webServer}, Customers: \$customersList"
+        //                     \$uri = "https://${webServer}:5986"
+        //                     \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
+        //                     \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
+
+        //                     \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+        //                     \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+
+        //                     Invoke-Command -Session \$session -ScriptBlock {
+        //                         param(\$innerCustomersList)
+        //                         foreach (\$customer in \$innerCustomersList -split ',') {
+        //                             robocopy "D:\\Publish\\PUBLISH" "D:\\ERP9\\\$customer" /E /MIR /XD "Attached Logs" /XF web.config /MT:4 /NP /NDL /NFL /NC /NS
+        //                         }
+                                
+        //                     } -ArgumentList \$customersList
+        //                     Remove-PSSession \$session
+        //                 """
+        //                 builders[webServer] = {
+        //                     powershell(script: remotePSSession)
+        //                 }
+        //             }
+        //             parallel builders
+                    
+        //         }
+        //     }
+        // }
     }
 
 
