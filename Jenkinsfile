@@ -224,7 +224,7 @@ pipeline {
                         def customers = params."${customer}"
 
                         def remotePSSession = """
-                            \$customers = "${customers}" -split ','
+                            \$customers = "${customers}"
                             Write-Host "Web Server: ${webServer}, Customers: \$customers"
                             \$uri = "https://${webServer}:5986"
                             \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
