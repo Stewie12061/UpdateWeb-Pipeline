@@ -220,7 +220,8 @@ pipeline {
                     def password = "${env:PASSWORD}"
                     def builders = [:]
                     for(webServer in webServers){
-                        String[] customer = params.SERVER_${webServer}_CUSTOMER_LIST.split(',')
+                        def customer = "SERVER_${webServer}_CUSTOMER_LIST"
+                        String[] customers = params."${customer}".split(',')
                         def remotePSSession = """
                             \$uri = "https://${webServer}:5986"
                             \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
@@ -233,7 +234,7 @@ pipeline {
                                 # Get folder names
                                 \$webSubfolders = Get-ChildItem -Path "D:\\ERP9" -Directory | ForEach-Object {
                                     \$folderName = \$_.Name
-                                    if (\$folderName -in '${customer}') {
+                                    if (\$folderName -in '${customers}') {
                                         \$folderName
                                     }
                                 }
