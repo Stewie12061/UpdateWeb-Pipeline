@@ -238,7 +238,7 @@ pipeline {
                                         \$folderName
                                     }
                                 }
-                                \$webSubfolders
+                                Write-Host "\$webSubfolders"
                             }
                             Remove-PSSession \$session
                         """
