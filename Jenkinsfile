@@ -135,6 +135,42 @@ pipeline {
                 }
             }
         }
+        stage('Create Folder Publish on Server'){
+            steps{
+                script{
+                    String[] webServers = params.WEB_SERVER_LIST.split(',')
+                    def username = "${env:USERNAME}"
+                    def password = "${env:PASSWORD}"
+                    def desFolder = "${env:DESTINATION_FOLDER}"
+                    def builders = [:]
+                    for(webServer in webServers){
+                        def remotePSSession = """
+                            Write-Host "Web Server: ${webServer}"
+                            \$uri = "https://${webServer}:5986"
+                            \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
+
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+                            Invoke-Command -Session \$session -ScriptBlock {
+                                if (-not (Test-Path "D:\\Publish\\${desFolder}" -PathType Container)) {
+                                    # If the folder doesn't exist, create it
+                                    New-Item -ItemType Directory -Path "D:\\Publish\\${desFolder}" -Force
+                                    Write-Host "Folder created: "D:\\Publish\\${desFolder}" "
+                                }
+                            }
+                            Remove-PSSession \$session
+                        """
+
+                        builders[webServer] = {
+                            powershell(script: remotePSSession)
+                        }
+                    }
+                    parallel builders
+                    
+                }
+            }
+        }
         stage('Push source to Server') {
             steps {
                 script {
