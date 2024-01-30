@@ -115,6 +115,7 @@ pipeline {
         string(name: 'USERNAME', defaultValue: 'stewie12061', description: 'User login to server')
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
+        string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
     }
 
     agent {
@@ -125,6 +126,7 @@ pipeline {
         stage('Zip Folder Publish'){
             steps{
                 script{
+                    //zip folder to jenkins workspace
                     def zipPublish = '''
                         $source = "$env:SOURCE_PATH"
                         Compress-Archive -Path "$source\\*" -DestinationPath "PUBLISH.zip" -Force
@@ -156,10 +158,11 @@ pipeline {
                         }
                         def username = "${env:USERNAME}"
                         def password = "${env:PASSWORD}"
+                        def desFolder = "${env:DESTINATION_FOLDER}"
 
                         def copyscript = """
                             # Connect to the network drive
-                            net use $drive: \\\\$webServer\\Publish /user:$remoteName\\$username $password
+                            net use $drive: \\\\$webServer\\Publish\\$desFolder /user:$remoteName\\$username $password
 
                             # Execute robocopy and wait for it to finish
                             Start-Process robocopy -ArgumentList @(
@@ -192,6 +195,7 @@ pipeline {
                     String[] webServers = params.WEB_SERVER_LIST.split(',')
                     def username = "${env:USERNAME}"
                     def password = "${env:PASSWORD}"
+                    def desFolder = "${env:DESTINATION_FOLDER}"
                     def builders = [:]
                     for(webServer in webServers){
                         def remotePSSession = """
@@ -203,7 +207,7 @@ pipeline {
                             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
                             Invoke-Command -Session \$session -ScriptBlock {
-                                Microsoft.PowerShell.Archive\\Expand-Archive -Path "D:\\Publish\\PUBLISH.zip" -DestinationPath "D:\\Publish\\PUBLISH" -Force
+                                Microsoft.PowerShell.Archive\\Expand-Archive -Path "D:\\Publish\\${desFolder}\\PUBLISH.zip" -DestinationPath "D:\\Publish\\${desFolder}\\PUBLISH" -Force
                             }
                             Remove-PSSession \$session
                         """
@@ -223,6 +227,7 @@ pipeline {
                     String[] webServers = params.WEB_SERVER_LIST.split(',')
                     def username = "${env:USERNAME}"
                     def password = "${env:PASSWORD}"
+                    def desFolder = "${env:DESTINATION_FOLDER}"
                     def builders = [:]
                     for(webServer in webServers){
                         def customer = "SERVER_${webServer}_CUSTOMER_LIST"
@@ -241,7 +246,7 @@ pipeline {
                             Invoke-Command -Session \$session -ScriptBlock {
                                 param(\$innerCustomersList)
                                 foreach (\$customer in \$innerCustomersList -split ',') {
-                                    robocopy "D:\\Publish\\PUBLISH" "D:\\ERP9\\\$customer\\Web" /E /MIR /XD "Attached Logs" /XF web.config /MT:4 /NP /NDL /NFL /NC /NS
+                                    robocopy "D:\\Publish\\${desFolder}\\PUBLISH" "D:\\ERP9\\\$customer\\Web" /E /MIR /XD "Attached Logs" /XF web.config /MT:4 /NP /NDL /NFL /NC /NS
                                 }
                                 
                             } -ArgumentList \$customersList
