@@ -132,7 +132,8 @@ pipeline {
             steps {
                 script {
                     def customers = []
-                    if (params.WEB_SERVER_LIST.contains("116.118.95.121")) {
+                    def serverList = WEB_SERVER_LIST
+                    if (serverList.contains("116.118.95.121")) {
                         def result = powershell(
                             returnStdout: true,
                             script: """
@@ -147,7 +148,6 @@ pipeline {
                         ).trim()
                         customers = result.tokenize('\\n').collect { it.trim() }
                     }
-                    currentBuild.parameters['SERVER_116.118.95.121_CUSTOMER_LIST'] = customers
                 }
             }
         }
