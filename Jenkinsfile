@@ -1,3 +1,8 @@
+if (currentBuild.getBuildCauses().toString().contains('BranchIndexingCause')) {
+    print "INFO: Build skipped due to trigger being Branch Indexing"
+    currentBuild.result = 'ABORTED' // optional, gives a better hint to the user that it's been skipped, rather than the default which shows it's successful
+    return
+}
 properties([
     parameters([
         [$class: 'ChoiceParameter',
@@ -59,13 +64,13 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["Something Wrong"]'
+                    script: 'return ["notok"]'
                 ], 
                 script: [
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = ['ok']
+                        def customers = ["ok"]
                         def remotePSSession = """
                             \$uri = "https://103.245.249.218:5986"
                             \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
