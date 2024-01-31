@@ -75,11 +75,11 @@ properties([
                             def result = powershell(
                                 returnStdout: true,
                                 script: """
-                                    \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-                                    \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
-                                    \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                                    \$session = New-PSSession -ConnectionUri "https://103.245.249.218:5986" -Credential \$cred -SessionOption \$sessionOption
-                                    Invoke-Command -Session \$session -ScriptBlock {
+                                    $securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                                    $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', $securepassword
+                                    $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                    $session = New-PSSession -ConnectionUri "https://103.245.249.218:5986" -Credential $cred -SessionOption $sessionOption
+                                    Invoke-Command -Session $session -ScriptBlock {
                                         Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
                                     }
                                 """
