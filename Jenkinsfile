@@ -66,7 +66,7 @@ properties([
                     sandbox: false,
                     script: """
                         def customers = []
-                        def server = "103.245.249.218"
+                        def server = "https://103.245.249.218:5986"
                         def folderPath = "D:\\ERP9"
                         def user = "stewie12061"
                         def password = "As@19006123"
@@ -81,7 +81,8 @@ properties([
                             \$securePassword = ConvertTo-SecureString -String \$password -AsPlainText -Force
                             \$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \$user, \$securePassword
 
-                            \$session = New-PSSession -ComputerName \$server -Credential \$credential
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ConnectionUri \$server -Credential \$credential -SessionOption \$sessionOption
                             \$folders = Get-ChildItem -Path \$folderPath -Directory | Select-Object -ExpandProperty Name
                             \$folders
                             Remove-PSSession \$session
