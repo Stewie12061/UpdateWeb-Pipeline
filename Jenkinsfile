@@ -128,223 +128,221 @@ pipeline {
     }
 
     stages {
-        stage('Initialize Parameters') {
-            steps {
-                script {
-                    def customers = []
-                    def serverList = WEB_SERVER_LIST
-                    if (serverList.contains("116.118.95.121")) {
-                        def result = powershell(
-                            returnStdout: true,
-                            script: """
-                                \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-                                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
-                                \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                                \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
-                                Invoke-Command -Session \$session -ScriptBlock {
-                                    Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
-                                }
-                            """
-                        ).trim()
-                        customers = result.tokenize('\\n').collect { it.trim() }
-                    }
-                }
-            }
-        }
-
-        stage('Choose Customers') {
-            steps {
-                script {
-                    def selectedCustomers = input(
-                        id: 'customerInput',
-                        message: 'Choose customers to update:',
-                        parameters: [
-                            choice(
-                                name: 'selectedCustomers',
-                                choices: customers,
-                                description: 'Select customers to update'
-                            )
-                        ]
-                    )
-
-                    currentBuild.parameters['SERVER_116.118.95.121_CUSTOMER_LIST'] = selectedCustomers
-                }
-            }
-        }
-        // stage('Zip Folder Publish'){
-        //     steps{
-        //         script{
-        //             //zip folder to jenkins workspace
-        //             def zipPublish = '''
-        //                 $source = "$env:SOURCE_PATH"
-        //                 Compress-Archive -Path "$source\\*" -DestinationPath "PUBLISH.zip" -Force
-        //             '''
-        //             powershell(script: zipPublish)
-        //         }
-        //     }
-        // }
-        // stage('Create Folder Publish on Server'){
-        //     steps{
-        //         script{
-        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
-        //             def username = "${env:USERNAME}"
-        //             def password = "${env:PASSWORD}"
-        //             def desFolder = "${env:DESTINATION_FOLDER}"
-        //             def builders = [:]
-        //             for(webServer in webServers){
-        //                 def remotePSSession = """
-        //                     Write-Host "Web Server: ${webServer}"
-        //                     \$uri = "https://${webServer}:5986"
-        //                     \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
-        //                     \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
-
-        //                     \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-        //                     \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
-        //                     Invoke-Command -Session \$session -ScriptBlock {
-        //                         if (-not (Test-Path "D:\\Publish\\${desFolder}" -PathType Container)) {
-        //                             # If the folder doesn't exist, create it
-        //                             New-Item -ItemType Directory -Path "D:\\Publish\\${desFolder}" -Force
-        //                             Write-Host "Folder created: "D:\\Publish\\${desFolder}" "
-        //                         }
-        //                     }
-        //                     Remove-PSSession \$session
-        //                 """
-
-        //                 builders[webServer] = {
-        //                     powershell(script: remotePSSession)
-        //                 }
-        //             }
-        //             parallel builders
-                    
-        //         }
-        //     }
-        // }
-        // stage('Push source to Server') {
+        // stage('Initialize Parameters') {
         //     steps {
         //         script {
-        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
-        //             def builders = [:]
-        //             for(webServer in webServers){
-        //                 echo "$webServer"
-        //                 def remoteName = ""
-        //                 def drive = ""
-        //                 if(webServer.equals("116.118.95.121")){
-        //                     remoteName = "web-server"
-        //                     drive = "Z"
-        //                 }
-        //                 if(webServer.equals("103.245.249.218")){
-        //                     remoteName = "web-server-2"
-        //                     drive = "Y"
-        //                 }
-        //                 if(webServer.equals("10.0.0.1")){
-        //                     remoteName = "test"
-        //                     drive = "X"
-        //                 }
-        //                 def username = "${env:USERNAME}"
-        //                 def password = "${env:PASSWORD}"
-        //                 def desFolder = "${env:DESTINATION_FOLDER}"
-
-        //                 def copyscript = """
-        //                     # Connect to the network drive
-        //                     net use $drive: \\\\$webServer\\Publish\\$desFolder /user:$remoteName\\$username $password
-
-        //                     # Execute robocopy and wait for it to finish
-        //                     Start-Process robocopy -ArgumentList @(
-        //                         "${env:WORKSPACE}",
-        //                         "$drive:\\",
-        //                         "PUBLISH.zip",
-        //                         "/MT:8",
-        //                         "/np",
-        //                         "/ndl",
-        //                         "/nfl",
-        //                         "/nc",
-        //                         "/ns"
-        //                     ) -Wait
-
-        //                     # Disconnect from the network drive
-        //                     net use $drive: /delete
-        //                 """
-
-        //                 builders[webServer] = {
-        //                     powershell(script: "$copyscript")
-        //                 }
-        //             }
-        //             parallel builders
-        //         }
-        //     }
-        // }
-        // stage('Unzip Folder Publish'){
-        //     steps{
-        //         script{
-        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
-        //             def username = "${env:USERNAME}"
-        //             def password = "${env:PASSWORD}"
-        //             def desFolder = "${env:DESTINATION_FOLDER}"
-        //             def builders = [:]
-        //             for(webServer in webServers){
-        //                 def remotePSSession = """
-        //                     Write-Host "Web Server: ${webServer}"
-        //                     \$uri = "https://${webServer}:5986"
-        //                     \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
-        //                     \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
-
-        //                     \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-        //                     \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
-        //                     Invoke-Command -Session \$session -ScriptBlock {
-        //                         Microsoft.PowerShell.Archive\\Expand-Archive -Path "D:\\Publish\\${desFolder}\\PUBLISH.zip" -DestinationPath "D:\\Publish\\${desFolder}\\PUBLISH" -Force
-        //                     }
-        //                     Remove-PSSession \$session
-        //                 """
-
-        //                 builders[webServer] = {
-        //                     powershell(script: remotePSSession)
-        //                 }
-        //             }
-        //             parallel builders
-                    
-        //         }
-        //     }
-        // }
-        // stage('Sync Publish folder'){
-        //     steps{
-        //         script{
-        //             String[] webServers = params.WEB_SERVER_LIST.split(',')
-        //             def username = "${env:USERNAME}"
-        //             def password = "${env:PASSWORD}"
-        //             def desFolder = "${env:DESTINATION_FOLDER}"
-        //             def builders = [:]
-        //             for(webServer in webServers){
-        //                 def customer = "SERVER_${webServer}_CUSTOMER_LIST"
-        //                 def customers = params."${customer}"
-
-        //                 def remotePSSession = """
-        //                     \$customersList = "${customers}"
-        //                     Write-Host "Web Server: ${webServer}, Customers: \$customersList"
-        //                     \$uri = "https://${webServer}:5986"
-        //                     \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
-        //                     \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
-
-        //                     \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-        //                     \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
-
-        //                     Invoke-Command -Session \$session -ScriptBlock {
-        //                         param(\$innerCustomersList)
-        //                         foreach (\$customer in \$innerCustomersList -split ',') {
-        //                             robocopy "D:\\Publish\\${desFolder}\\PUBLISH" "D:\\ERP9\\\$customer\\Web" /E /MIR /XD "Attached Logs" /XF web.config /MT:4 /NP /NDL /NFL /NC /NS
+        //             def customers = []
+        //             if (WEB_SERVER_LIST.contains("116.118.95.121")) {
+        //                 def result = powershell(
+        //                     returnStdout: true,
+        //                     script: """
+        //                         \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+        //                         \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+        //                         \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+        //                         \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
+        //                         Invoke-Command -Session \$session -ScriptBlock {
+        //                             Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
         //                         }
-                                
-        //                     } -ArgumentList \$customersList
-        //                     Remove-PSSession \$session
-        //                 """
-        //                 builders[webServer] = {
-        //                     powershell(script: remotePSSession)
-        //                 }
+        //                     """
+        //                 ).trim()
+        //                 customers = result.tokenize('\\n').collect { it.trim() }
         //             }
-        //             parallel builders
-                    
         //         }
         //     }
         // }
+
+        // stage('Choose Customers') {
+        //     steps {
+        //         script {
+        //             def selectedCustomers = input(
+        //                 id: 'customerInput',
+        //                 message: 'Choose customers to update:',
+        //                 parameters: [
+        //                     choice(
+        //                         name: 'selectedCustomers',
+        //                         choices: customers,
+        //                         description: 'Select customers to update'
+        //                     )
+        //                 ]
+        //             )
+        //             currentBuild.parameters['SERVER_116.118.95.121_CUSTOMER_LIST'] = selectedCustomers
+        //         }
+        //     }
+        // }
+        stage('Zip Folder Publish'){
+            steps{
+                script{
+                    //zip folder to jenkins workspace
+                    def zipPublish = '''
+                        $source = "$env:SOURCE_PATH"
+                        Compress-Archive -Path "$source\\*" -DestinationPath "PUBLISH.zip" -Force
+                    '''
+                    powershell(script: zipPublish)
+                }
+            }
+        }
+        stage('Create Folder Publish on Server'){
+            steps{
+                script{
+                    String[] webServers = params.WEB_SERVER_LIST.split(',')
+                    def username = "${env:USERNAME}"
+                    def password = "${env:PASSWORD}"
+                    def desFolder = "${env:DESTINATION_FOLDER}"
+                    def builders = [:]
+                    for(webServer in webServers){
+                        def remotePSSession = """
+                            Write-Host "Web Server: ${webServer}"
+                            \$uri = "https://${webServer}:5986"
+                            \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
+
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+                            Invoke-Command -Session \$session -ScriptBlock {
+                                if (-not (Test-Path "D:\\Publish\\${desFolder}" -PathType Container)) {
+                                    # If the folder doesn't exist, create it
+                                    New-Item -ItemType Directory -Path "D:\\Publish\\${desFolder}" -Force
+                                    Write-Host "Folder created: "D:\\Publish\\${desFolder}" "
+                                }
+                            }
+                            Remove-PSSession \$session
+                        """
+
+                        builders[webServer] = {
+                            powershell(script: remotePSSession)
+                        }
+                    }
+                    parallel builders
+                    
+                }
+            }
+        }
+        stage('Push source to Server') {
+            steps {
+                script {
+                    String[] webServers = params.WEB_SERVER_LIST.split(',')
+                    def builders = [:]
+                    for(webServer in webServers){
+                        echo "$webServer"
+                        def remoteName = ""
+                        def drive = ""
+                        if(webServer.equals("116.118.95.121")){
+                            remoteName = "web-server"
+                            drive = "Z"
+                        }
+                        if(webServer.equals("103.245.249.218")){
+                            remoteName = "web-server-2"
+                            drive = "Y"
+                        }
+                        if(webServer.equals("10.0.0.1")){
+                            remoteName = "test"
+                            drive = "X"
+                        }
+                        def username = "${env:USERNAME}"
+                        def password = "${env:PASSWORD}"
+                        def desFolder = "${env:DESTINATION_FOLDER}"
+
+                        def copyscript = """
+                            # Connect to the network drive
+                            net use $drive: \\\\$webServer\\Publish\\$desFolder /user:$remoteName\\$username $password
+
+                            # Execute robocopy and wait for it to finish
+                            Start-Process robocopy -ArgumentList @(
+                                "${env:WORKSPACE}",
+                                "$drive:\\",
+                                "PUBLISH.zip",
+                                "/MT:8",
+                                "/np",
+                                "/ndl",
+                                "/nfl",
+                                "/nc",
+                                "/ns"
+                            ) -Wait
+
+                            # Disconnect from the network drive
+                            net use $drive: /delete
+                        """
+
+                        builders[webServer] = {
+                            powershell(script: "$copyscript")
+                        }
+                    }
+                    parallel builders
+                }
+            }
+        }
+        stage('Unzip Folder Publish'){
+            steps{
+                script{
+                    String[] webServers = params.WEB_SERVER_LIST.split(',')
+                    def username = "${env:USERNAME}"
+                    def password = "${env:PASSWORD}"
+                    def desFolder = "${env:DESTINATION_FOLDER}"
+                    def builders = [:]
+                    for(webServer in webServers){
+                        def remotePSSession = """
+                            Write-Host "Web Server: ${webServer}"
+                            \$uri = "https://${webServer}:5986"
+                            \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
+
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+                            Invoke-Command -Session \$session -ScriptBlock {
+                                Microsoft.PowerShell.Archive\\Expand-Archive -Path "D:\\Publish\\${desFolder}\\PUBLISH.zip" -DestinationPath "D:\\Publish\\${desFolder}\\PUBLISH" -Force
+                            }
+                            Remove-PSSession \$session
+                        """
+
+                        builders[webServer] = {
+                            powershell(script: remotePSSession)
+                        }
+                    }
+                    parallel builders
+                    
+                }
+            }
+        }
+        stage('Sync Publish folder'){
+            steps{
+                script{
+                    String[] webServers = params.WEB_SERVER_LIST.split(',')
+                    def username = "${env:USERNAME}"
+                    def password = "${env:PASSWORD}"
+                    def desFolder = "${env:DESTINATION_FOLDER}"
+                    def builders = [:]
+                    for(webServer in webServers){
+                        def customer = "SERVER_${webServer}_CUSTOMER_LIST"
+                        def customers = params."${customer}"
+
+                        def remotePSSession = """
+                            \$customersList = "${customers}"
+                            Write-Host "Web Server: ${webServer}, Customers: \$customersList"
+                            \$uri = "https://${webServer}:5986"
+                            \$securepassword = ConvertTo-SecureString -String '${password}' -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList '${username}', \$securepassword
+
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+
+                            Invoke-Command -Session \$session -ScriptBlock {
+                                param(\$innerCustomersList)
+                                foreach (\$customer in \$innerCustomersList -split ',') {
+                                    robocopy "D:\\Publish\\${desFolder}\\PUBLISH" "D:\\ERP9\\\$customer\\Web" /E /MIR /XD "Attached Logs" /XF web.config /MT:4 /NP /NDL /NFL /NC /NS
+                                }
+                                
+                            } -ArgumentList \$customersList
+                            Remove-PSSession \$session
+                        """
+                        builders[webServer] = {
+                            powershell(script: remotePSSession)
+                        }
+                    }
+                    parallel builders
+                    
+                }
+            }
+        }
     }
 
 
