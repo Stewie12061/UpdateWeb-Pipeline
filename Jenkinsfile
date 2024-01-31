@@ -64,42 +64,28 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: """
+                    script: '''
                         def customers = ['ok']
-                        def server = "https://103.245.249.218:5986"
-                        def folderPath = "D:\\ERP9"
-                        def user = "stewie12061"
-                        def password = "As@19006123"
-                        def getCustomersScript = '''
-                            param (
-                                [string]\$server,
-                                [string]\$folderPath,
-                                [string]\$user,
-                                [string]\$password
-                            )
-
-                            \$securePassword = ConvertTo-SecureString -String \$password -AsPlainText -Force
-                            \$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \$user, \$securePassword
+                        def remotePSSession = """
+                            \$uri = "https://103.245.249.218:5986"
+                            \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
 
                             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            \$session = New-PSSession -ConnectionUri \$server -Credential \$credential -SessionOption \$sessionOption
-                            \$folders = Get-ChildItem -Path \$folderPath -Directory | Select-Object -ExpandProperty Name
-                            \$folders
+                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
+                            Invoke-Command -Session \$session -ScriptBlock {
+                                $folders = Get-ChildItem -Path $folderPath -Directory | Select-Object -ExpandProperty Name
+                                Write-Host "$folders"
+                            }
                             Remove-PSSession \$session
-                        '''
+                        """
 
-                        def result = bat(script: "powershell.exe -ExecutionPolicy Bypass -command \\"& { \$psScript }\\" -server \$server -folderPath \$folderPath -user \$user -password \$password", returnStatus: true).trim()
+                        def result = powershell(script: remotePSSession)
 
-                        if (result == 0) {
-                            // Successfully executed PowerShell script, parse folder names
-                            customers.addAll(result.split("\\n").collect { it.trim() + ":selected" })
-                        } else {
-                            // Failed to execute PowerShell script
-                            customers.add("Error fetching folder names")
-                        }
+                        customers.addAll(result.split("\\n").collect { it.trim() + ":selected" })
 
                         return customers
-                    """
+                    '''
                 ]
             )
         ],
