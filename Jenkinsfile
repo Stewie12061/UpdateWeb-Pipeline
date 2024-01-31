@@ -65,7 +65,7 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: """
-                        def customers = []
+                        def customers = ['ok']
                         def server = "https://103.245.249.218:5986"
                         def folderPath = "D:\\ERP9"
                         def user = "stewie12061"
