@@ -80,15 +80,14 @@ properties([
                                     \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                                     \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
                                     Invoke-Command -Session \$session -ScriptBlock {
-                                    # Run your command on the remote server
-                                    Invoke-Command -ComputerName ${remoteServer} -Credential \$credentials -ScriptBlock {
                                         Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
                                     }
                                 """
                             ).trim()
+                            def foldersList = result.tokenize('\n').collect { "\"${it.trim()}\"" }
 
                             // Parse the result and add to the customers list
-                            customers.addAll(result.tokenize('\\n'))
+                            customers.addAll(foldersList)
                         }
                         return customers
                     '''
