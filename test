@@ -1,0 +1,96 @@
+// if (currentBuild.getBuildCauses().toString().contains('BranchIndexingCause')) {
+//     print "INFO: Build skipped due to trigger being Branch Indexing"
+//     currentBuild.result = 'ABORTED' // optional, gives a better hint to the user that it's been skipped, rather than the default which shows it's successful
+//     return
+// }
+properties([
+    parameters([
+        [$class: 'ChoiceParameter',
+            choiceType: 'PT_CHECKBOX', 
+            description: 'Select Web Server to update source web', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'WEB_SERVER_LIST', 
+            randomName: 'choice-parameter-370758416905300', 
+            script: groovyScript(
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["error"]'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["116.118.95.121:selected","103.245.249.218:selected","10.0.0.1"]'
+                ]
+            )
+        ],
+        [$class: 'CascadeChoiceParameter',
+            choiceType: 'PT_CHECKBOX', 
+            description: 'Select customer to update', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'SERVER_103.245.249.218_CUSTOMER_LIST', 
+            randomName: 'choice-parameter-370758416905302',
+            referencedParameters: 'WEB_SERVER_LIST', 
+            script: groovyScript(
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["error"]'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: '''
+                        def customers = []
+                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            def result = powershell(
+                            returnStdout: true,
+                            script: """
+                                \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                                \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
+                                Invoke-Command -Session \$session -ScriptBlock {
+                                    Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                }
+                            """
+                            ).trim()
+                            def foldersList = result.tokenize('\\n').collect { "\\\"${it.trim()}\\\"" }
+                            customers.addAll($foldersList)
+                        }
+                        return customers
+                    '''
+                ]
+            )
+        ],
+    ])
+])
+
+pipeline {
+
+    options {
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
+    }
+
+    parameters {
+        string(description: 'Fill agent to run', name: 'build_agent')
+    }
+
+    agent {
+        label params['build_agent']
+    }
+
+    stages {
+        stage('test'){
+            steps{
+                script{   
+                    echo "ok"
+                }
+            }
+        }
+
+    }
+}
+

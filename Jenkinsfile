@@ -71,22 +71,30 @@ properties([
                     sandbox: false,
                     script: '''
                         def customers = []
-                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                        def webServers = WEB_SERVER_LIST ?: []
+                        
+                        if (webServers.contains("116.118.95.121")) {
                             def result = powershell(
-                            returnStdout: true,
-                            script: """
-                                \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-                                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
-                                \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                                \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
-                                Invoke-Command -Session \$session -ScriptBlock {
-                                    Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
-                                }
-                            """
-                            ).trim()
-                            def foldersList = result.tokenize('\\n').collect { "\\\"${it.trim()}\\\"" }
-                            customers.addAll($foldersList)
+                                returnStatus: true,
+                                script: """
+                                    \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                                    \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                                    \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                    \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
+                                    Invoke-Command -Session \$session -ScriptBlock {
+                                        Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                    }
+                                """
+                            )
+                            
+                            if (result == 0) {
+                                def foldersList = result.tokenize('\\n').collect { "\\\"${it.trim()}\\\"" }
+                                customers.addAll(foldersList)
+                            } else {
+                                customers.add("Error executing PowerShell script on 116.118.95.121")
+                            }
                         }
+
                         return customers
                     '''
                 ]
