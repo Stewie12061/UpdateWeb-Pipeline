@@ -74,19 +74,16 @@ properties([
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
                             def result = powershell(
                                 returnStdout: true,
-                                script: """
-                                    \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-                                    \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
-                                    \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                                    \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
-                                    Invoke-Command -Session \$session -ScriptBlock {
-                                        Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                script: \\$securepassword = ConvertTo-SecureString -String \'As@19006123\' -AsPlainText -Force
+                                    \\$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \'stewie12061\', \\$securepassword
+                                    \\$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                    \\$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \\$cred -SessionOption \\$sessionOption
+                                    Invoke-Command -Session \\$session -ScriptBlock {
+                                        Get-ChildItem -Path \'D:\\\\ERP9\' -Directory | Select-Object -ExpandProperty Name
                                     }
                                 """
                             ).trim()
-                            def foldersList = result.tokenize('\n').collect { "\"${it.trim()}\"" }
-
-                            // Parse the result and add to the customers list
+                            def foldersList = result.tokenize(\'\\n\').collect { "\\"${it.trim()}\\"" }
                             customers.addAll(foldersList)
                         }
                         return customers
