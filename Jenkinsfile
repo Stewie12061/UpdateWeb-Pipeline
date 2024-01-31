@@ -67,7 +67,21 @@ properties([
                     script: '''
                         def customers = []
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            customers.addAll(["KH-ERP9-04:selected","KH-ERP9-05","KH-ERP9-06:selected"])
+                            $server = "103.245.249.218"
+                            $uri = "https://$($server):5986"
+                            $user = "stewie12061"
+                            $password = "As@19006123"
+                            $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+                            $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $user, $securepassword
+
+                            $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            $session = New-PSSession -ConnectionUri $uri -Credential $cred -SessionOption $sessionOption
+                            $folderNames = Invoke-Command -Session $session -ScriptBlock {
+                                Get-ChildItem -Path "D:\\ERP9" -Directory | Select-Object -ExpandProperty Name
+                            }
+                            $folderNames.each {
+                                customers.add("${it}:selected")
+                            }
                         }
                         return customers
                     '''
