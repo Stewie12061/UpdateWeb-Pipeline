@@ -70,31 +70,26 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = ["ok"]
-                        if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            def uri = "https://103.245.249.218:5986"
-                            def user = "stewie12061"
-                            def password = "As@19006123"
-                            
-                            def securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
-                            def cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $user, $securepassword
-                            
-                            def remoteScript = """
-                                $folderPath = 'D:\\00.PUBLISH'
-                                $folders = Get-ChildItem $folderPath -Directory | Select-Object -ExpandProperty Name
-                                $folders
-                            """
-                            
-                            def remoteFolders = powershell(
+                        def customers = []
+                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            def result = powershell(
                                 returnStdout: true,
-                                script: remoteScript
+                                script: """
+                                    \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                                    \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                                    \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                    \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
+                                    Invoke-Command -Session \$session -ScriptBlock {
+                                    # Run your command on the remote server
+                                    Invoke-Command -ComputerName ${remoteServer} -Credential \$credentials -ScriptBlock {
+                                        Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                    }
+                                """
                             ).trim()
 
-                            remoteFolders.each { folder ->
-                                customers.add("${folder}:selected")
-                            }
+                            // Parse the result and add to the customers list
+                            customers.addAll(result.tokenize('\\n'))
                         }
-
                         return customers
                     '''
                 ]
@@ -152,7 +147,21 @@ pipeline {
         stage('test'){
             steps{
                 script{
-                    echo "ok"
+                    def result = powershell(
+                        returnStdout: true,
+                        script: """
+                            \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
+                            Invoke-Command -Session \$session -ScriptBlock {
+                            # Run your command on the remote server
+                            Invoke-Command -ComputerName ${remoteServer} -Credential \$credentials -ScriptBlock {
+                                Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                            }
+                        """
+                    ).trim()
+                    echo "$result"
                 }
             }
         }
