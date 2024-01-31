@@ -59,7 +59,7 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["error"]'
+                    script: 'return ["Something Wrong"]'
                 ], 
                 script: [
                     classpath: [], 
