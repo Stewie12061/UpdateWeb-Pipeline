@@ -64,7 +64,7 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["notok"]'
+                    script: 'return ["error"]'
                 ], 
                 script: [
                     classpath: [], 
