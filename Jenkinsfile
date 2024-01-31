@@ -71,29 +71,29 @@ properties([
                     sandbox: false,
                     script: '''
                         def customers = ["ok"]
-                        if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            def uri = "https://103.245.249.218:5986"
-                            def user = "stewie12061"
-                            def password = "As@19006123"
+                        // if(WEB_SERVER_LIST.contains("103.245.249.218")){
+                        //     def uri = "https://103.245.249.218:5986"
+                        //     def user = "stewie12061"
+                        //     def password = "As@19006123"
                             
-                            def securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
-                            def cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $user, $securepassword
+                        //     def securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+                        //     def cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $user, $securepassword
                             
-                            def remoteScript = """
-                                $folderPath = 'D:\\00.PUBLISH'
-                                $folders = Get-ChildItem $folderPath -Directory | Select-Object -ExpandProperty Name
-                                $folders
-                            """
+                        //     def remoteScript = """
+                        //         $folderPath = 'D:\\00.PUBLISH'
+                        //         $folders = Get-ChildItem $folderPath -Directory | Select-Object -ExpandProperty Name
+                        //         $folders
+                        //     """
                             
-                            def remoteFolders = powershell(
-                                returnStdout: true,
-                                script: remoteScript
-                            ).trim()
+                        //     def remoteFolders = powershell(
+                        //         returnStdout: true,
+                        //         script: remoteScript
+                        //     ).trim()
 
-                            remoteFolders.each { folder ->
-                                customers.add("${folder}:selected")
-                            }
-                        }
+                        //     remoteFolders.each { folder ->
+                        //         customers.add("${folder}:selected")
+                        //     }
+                        // }
 
                         return customers
                     '''
