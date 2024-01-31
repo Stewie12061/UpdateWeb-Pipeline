@@ -159,7 +159,8 @@ pipeline {
                             }
                         """
                     ).trim()
-                    def foldersList = result.tokenize('\n').collect { it.trim() }
+                    def foldersList = result.tokenize('\n').collect { "\"${it.trim()}\"" }
+
                     echo "$foldersList"
                 }
             }
