@@ -84,10 +84,8 @@ properties([
                                 }
                             """
                             ).trim()
-                            def foldersList = result.tokenize('\\n').collect
-
-                            // Parse the result and add to the customers list
-                            customers.addAll(foldersList)
+                            def foldersList = result.tokenize('\\n').collect { "\\\"${it.trim()}\\\"" }
+                            customers.addAll($foldersList)
                         }
                         return customers
                     '''
