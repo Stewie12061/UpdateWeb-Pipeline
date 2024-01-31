@@ -155,8 +155,6 @@ pipeline {
                             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
                             Invoke-Command -Session \$session -ScriptBlock {
-                            # Run your command on the remote server
-                            Invoke-Command -ComputerName ${remoteServer} -Credential \$credentials -ScriptBlock {
                                 Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
                             }
                         """
