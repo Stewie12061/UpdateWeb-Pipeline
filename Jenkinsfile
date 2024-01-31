@@ -149,24 +149,46 @@ pipeline {
     }
 
     stages {
-        stage('test'){
-            steps{
-                script{
-                    def result = powershell(
-                        returnStdout: true,
-                        script: """
-                            \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
-                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
-                            Invoke-Command -Session \$session -ScriptBlock {
-                                Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
-                            }
-                        """
-                    ).trim()
-                    def foldersList = result.tokenize('\n').collect { "\"${it.trim()}\"" }
+        stage('Initialize Parameters') {
+            steps {
+                script {
+                    def customers = []
+                    if (params.WEB_SERVER_LIST.contains("116.118.95.121")) {
+                        def result = powershell(
+                            returnStdout: true,
+                            script: """
+                                \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                                \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
+                                Invoke-Command -Session \$session -ScriptBlock {
+                                    Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+                                }
+                            """
+                        ).trim()
+                        customers = result.tokenize('\\n').collect { it.trim() }
+                    }
+                    currentBuild.parameters['SERVER_116.118.95.121_CUSTOMER_LIST'] = customers
+                }
+            }
+        }
 
-                    echo "$foldersList"
+        stage('Choose Customers') {
+            steps {
+                script {
+                    def selectedCustomers = input(
+                        id: 'customerInput',
+                        message: 'Choose customers to update:',
+                        parameters: [
+                            choice(
+                                name: 'selectedCustomers',
+                                choices: customers,
+                                description: 'Select customers to update'
+                            )
+                        ]
+                    )
+
+                    currentBuild.parameters['SERVER_116.118.95.121_CUSTOMER_LIST'] = selectedCustomers
                 }
             }
         }
