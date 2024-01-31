@@ -64,27 +64,41 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: '''
+                    script: """
                         def customers = []
-                        if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            $server = "103.245.249.218"
-                            $uri = "https://$($server):5986"
-                            $user = "stewie12061"
-                            $password = "As@19006123"
-                            $securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
-                            $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $user, $securepassword
+                        def server = "103.245.249.218"
+                        def folderPath = "D:\\ERP9"
+                        def user = "stewie12061"
+                        def password = "As@19006123"
+                        def getCustomersScript = '''
+                            param (
+                                [string]\$server,
+                                [string]\$folderPath,
+                                [string]\$user,
+                                [string]\$password
+                            )
 
-                            $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            $session = New-PSSession -ConnectionUri $uri -Credential $cred -SessionOption $sessionOption
-                            $folderNames = Invoke-Command -Session $session -ScriptBlock {
-                                Get-ChildItem -Path "D:\\ERP9" -Directory | Select-Object -ExpandProperty Name
-                            }
-                            $folderNames.each {
-                                customers.add("${it}:selected")
-                            }
+                            \$securePassword = ConvertTo-SecureString -String \$password -AsPlainText -Force
+                            \$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \$user, \$securePassword
+
+                            \$session = New-PSSession -ComputerName \$server -Credential \$credential
+                            \$folders = Get-ChildItem -Path \$folderPath -Directory | Select-Object -ExpandProperty Name
+                            \$folders
+                            Remove-PSSession \$session
+                        '''
+
+                        def result = bat(script: "powershell.exe -ExecutionPolicy Bypass -command \\"& { \$psScript }\\" -server \$server -folderPath \$folderPath -user \$user -password \$password", returnStatus: true).trim()
+
+                        if (result == 0) {
+                            // Successfully executed PowerShell script, parse folder names
+                            customers.addAll(result.split("\\n").collect { it.trim() + ":selected" })
+                        } else {
+                            // Failed to execute PowerShell script
+                            customers.add("Error fetching folder names")
                         }
+
                         return customers
-                    '''
+                    """
                 ]
             )
         ],
