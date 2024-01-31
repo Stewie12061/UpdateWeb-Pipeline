@@ -120,7 +120,7 @@ properties([
                     script: '''
                         def customers = []
                         if(WEB_SERVER_LIST.contains("10.0.0.1")){
-                            customers.addAll(["stewie","jennie"])
+                            customers.addAll(["stewie","jennie","Lisa"])
                         }
                         return customers
                     '''
