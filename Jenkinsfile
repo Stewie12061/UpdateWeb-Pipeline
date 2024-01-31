@@ -154,15 +154,13 @@ pipeline {
                             \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
                             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
-                            \$folders = Invoke-Command -Session \$session -ScriptBlock {
+                            Invoke-Command -Session \$session -ScriptBlock {
                                 Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
                             }
-                            \$jsonFolders = \$folders | ConvertTo-Json -Compress
-                            Write-Output \$jsonFolders
                         """
                     ).trim()
-
-                    echo "$result"
+                    def foldersList = result.tokenize('\n').collect { it.trim() }
+                    echo "$foldersList"
                 }
             }
         }
