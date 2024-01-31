@@ -71,23 +71,29 @@ properties([
                     sandbox: false,
                     script: '''
                         def customers = ["ok"]
-                        def remotePSSession = """
-                            \$uri = "https://103.245.249.218:5986"
-                            \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                        if(WEB_SERVER_LIST.contains("103.245.249.218")){
+                            def uri = "https://103.245.249.218:5986"
+                            def user = "stewie12061"
+                            def password = "As@19006123"
+                            
+                            def securepassword = ConvertTo-SecureString -String $password -AsPlainText -Force
+                            def cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $user, $securepassword
+                            
+                            def remoteScript = """
+                                $folderPath = 'D:\\00.PUBLISH'
+                                $folders = Get-ChildItem $folderPath -Directory | Select-Object -ExpandProperty Name
+                                $folders
+                            """
+                            
+                            def remoteFolders = powershell(
+                                returnStdout: true,
+                                script: remoteScript
+                            ).trim()
 
-                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            \$session = New-PSSession -ConnectionUri \$uri -Credential \$cred -SessionOption \$sessionOption
-                            Invoke-Command -Session \$session -ScriptBlock {
-                                $folders = Get-ChildItem -Path $folderPath -Directory | Select-Object -ExpandProperty Name
-                                Write-Host "$folders"
+                            remoteFolders.each { folder ->
+                                customers.add("${folder}:selected")
                             }
-                            Remove-PSSession \$session
-                        """
-
-                        def result = powershell(script: remotePSSession)
-
-                        customers.addAll(result.split("\\n").collect { it.trim() + ":selected" })
+                        }
 
                         return customers
                     '''
