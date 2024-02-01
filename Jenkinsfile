@@ -78,33 +78,6 @@ properties([
                     '''
                 ]
             )
-        ],
-        [$class: 'CascadeChoiceParameter',
-            choiceType: 'PT_CHECKBOX', 
-            description: 'Select customer to update', 
-            filterLength: 1, 
-            filterable: false, 
-            name: 'SERVER_10.0.0.1_CUSTOMER_LIST', 
-            randomName: 'choice-parameter-370758416905303',
-            referencedParameters: 'WEB_SERVER_LIST', 
-            script: groovyScript(
-                fallbackScript: [
-                    classpath: [], 
-                    sandbox: false,
-                    script: 'return ["error"]'
-                ], 
-                script: [
-                    classpath: [], 
-                    sandbox: false,
-                    script: '''
-                        def customers = []
-                        if(WEB_SERVER_LIST.contains("10.0.0.1")){
-                            customers.addAll(["stewie","jennie","Lisa"])
-                        }
-                        return customers
-                    '''
-                ]
-            )
         ]
     ])
 ])
@@ -234,10 +207,7 @@ pipeline {
                             remoteName = "web-server-2"
                             drive = "Y"
                         }
-                        if(webServer.equals("10.0.0.1")){
-                            remoteName = "test"
-                            drive = "X"
-                        }
+
                         def username = "${env:USERNAME}"
                         def password = "${env:PASSWORD}"
                         def desFolder = "${env:DESTINATION_FOLDER}"
