@@ -6,9 +6,18 @@
 def customers_list = []
 node('master') {
     stage('prepare choices') {
-        def my_choices = powershell script: "ls -l 'D:\\00.PUBLISH'", returnStdout:true
-        customers_list = my_choices.trim().split("\n")
-        echo "$customers_list"
+        def my_choices = powershell script: "Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name", returnStdout: true
+
+        // Split the output into an array of lines
+        def choices = my_choices.trim().split("\n")
+
+        // Iterate over each choice and append ":selected"
+        choices.each { choice ->
+            customers_list.add("${choice}:selected")
+        }
+
+        // Print the modified choices
+        echo customers_list
     }
 }
 properties([
@@ -50,18 +59,7 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: '''
-                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name'"
-                        def process = shellCommand.execute()
-                        process.waitFor()
-
-                        
-
-                        def customers = []
-                        customers.addAll(["Areas:selected","Attached:selected","bin:selected","Content:selected","Content_1BOSS:selected","Logs:selected","Scripts:selected","Scripts_1BOSS:selected","UserGuide:selected","Views:selected","Views_1BOSS:selected"])
-                        // Printing the constructed list
-                        return customers
-                    '''
+                    script: 'return bindings.customers_list'
                 ]
             )
         ],
@@ -115,47 +113,6 @@ pipeline {
     }
 
     stages {
-        // stage('Initialize Parameters') {
-        //     steps {
-        //         script {
-        //             def customers = []
-        //             if (WEB_SERVER_LIST.contains("116.118.95.121")) {
-        //                 def result = powershell(
-        //                     returnStdout: true,
-        //                     script: """
-        //                         \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-        //                         \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
-        //                         \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-        //                         \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
-        //                         Invoke-Command -Session \$session -ScriptBlock {
-        //                             Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
-        //                         }
-        //                     """
-        //                 ).trim()
-        //                 customers = result.tokenize('\\n').collect { it.trim() }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage('Choose Customers') {
-        //     steps {
-        //         script {
-        //             def selectedCustomers = input(
-        //                 id: 'customerInput',
-        //                 message: 'Choose customers to update:',
-        //                 parameters: [
-        //                     choice(
-        //                         name: 'selectedCustomers',
-        //                         choices: customers,
-        //                         description: 'Select customers to update'
-        //                     )
-        //                 ]
-        //             )
-        //             currentBuild.parameters['SERVER_116.118.95.121_CUSTOMER_LIST'] = selectedCustomers
-        //         }
-        //     }
-        // }
         stage('Zip Folder Publish'){
             steps{
                 script{
