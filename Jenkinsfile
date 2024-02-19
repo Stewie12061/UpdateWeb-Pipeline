@@ -43,6 +43,9 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: """
+                        import jenkins.model.*
+                        jenkins = Jenkins.instance
+                        
                         def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select-Object -ExpandProperty Name'
                         def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command $command"
                         def process = shellCommand.execute()
