@@ -7,7 +7,8 @@ def customers_list = []
 node('master') {
     stage('prepare choices') {
         def my_choices = powershell(script: 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name', returnStdout: true)
-        echo my_choices.join(",").collect { "\"$it:selected\"" }
+        customers_list = my_choices.join(",").collect { "\"$it:selected\"" }
+        echo "$customers_list"
         customers_list = my_choices.join(",").collect { "\"$it:selected\"" }
     }
 }
