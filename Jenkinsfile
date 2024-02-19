@@ -55,7 +55,7 @@ properties([
                         def names = output.split('\\n').findAll { it.trim() != 'Name' && it.trim() != '----' }.collect { it.trim() }
 
                         // Constructing the list with the desired format
-                        def customers = names.collect { "\\"${it}:selected\\"" }
+                        def customers = names.collect { "\"${it}:selected\"" }
 
                         // Printing the constructed list
                         println customers
