@@ -43,19 +43,19 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: """
-                        def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select Name'
-                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select Name' "
+                        def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select-Object -ExpandProperty Name'
+                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command \"${command}\""
                         def process = shellCommand.execute()
                         process.waitFor()
 
                         // Reading the output of the process
                         def output = process.text.trim()
 
-                        // Splitting the output by newline character and excluding the header and dashed line
-                        def names = output.split('\\n').findAll { it.trim() != 'Name' && it.trim() != '----' }.collect { it.trim() }
+                        // Splitting the output by newline character
+                        def names = output.split('\n').collect { it.trim() }.findAll { it != 'Name' && it != '----' }
 
                         // Constructing the list with the desired format
-                        def customers = names.collect { "${it}:selected" }
+                        def customers = names.collect { "\"${it}:selected\"" }
 
                         // Printing the constructed list
                         println customers
