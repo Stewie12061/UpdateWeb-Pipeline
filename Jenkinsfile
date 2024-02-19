@@ -54,7 +54,13 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ${customers_list}'
+                    script: '''
+                        def customers = []
+                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            customers.addAll(customers_list)
+                        }
+                        return customers
+                    '''
                 ]
             )
         ],
