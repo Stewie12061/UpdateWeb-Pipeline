@@ -13,10 +13,6 @@ node('master') {
         echo "$customers_list"
     }
 }
-def code = sprintf("""
-    choices = $customers_list
-    return choices 
-""")
 
 properties([
     parameters([
@@ -57,7 +53,13 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: code
+                    script: '''
+                        def customers = []
+                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            customers.addAll(${customers_list})
+                        }
+                        return customers
+                    '''
                 ]
             )
         ],
