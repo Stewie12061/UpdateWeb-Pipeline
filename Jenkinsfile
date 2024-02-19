@@ -6,7 +6,7 @@
 def customers_list = []
 node('master') {
     stage('prepare choices') {
-        def my_choices = powershell script: "Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name", returnStdout: true
+        def my_choices = powershell(script: 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name', returnStdout: true)
 
         // Split the output into an array of lines
         def choices = my_choices.trim().split("\n")
