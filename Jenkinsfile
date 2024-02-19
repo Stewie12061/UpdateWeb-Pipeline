@@ -54,7 +54,7 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return bindings.customers_list'
+                    script: 'return ${customers_list}'
                 ]
             )
         ],
