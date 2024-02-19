@@ -11,90 +11,111 @@ node('master') {
         customers_list = my_choices.split("\n").collect { "\"${it.trim()}:selected\"" }
 
         echo "$customers_list"
-    }
-    properties(parameters{
-            parameters([
-                [$class: 'ChoiceParameter',
-                    choiceType: 'PT_CHECKBOX', 
-                    description: 'Select Web Server to update source web', 
-                    filterLength: 1, 
-                    filterable: false, 
-                    name: 'WEB_SERVER_LIST', 
-                    randomName: 'choice-parameter-370758416905300', 
-                    script: groovyScript(
-                        fallbackScript: [
-                            classpath: [], 
-                            sandbox: false,
-                            script: 'return ["error"]'
-                        ], 
-                        script: [
-                            classpath: [], 
-                            sandbox: false,
-                            script: 'return ["116.118.95.121:selected","103.245.249.218:selected"]'
-                        ]
-                    )
-                ],
-                [$class: 'CascadeChoiceParameter',
-                    choiceType: 'PT_CHECKBOX', 
-                    description: 'Select customer to update', 
-                    filterLength: 1, 
-                    filterable: false, 
-                    name: 'SERVER_116.118.95.121_CUSTOMER_LIST', 
-                    randomName: 'choice-parameter-370758416905301',
-                    referencedParameters: 'WEB_SERVER_LIST', 
-                    script: groovyScript(
-                        fallbackScript: [
-                            classpath: [], 
-                            sandbox: false,
-                            script: 'return ["error:disabled"]'
-                        ], 
-                        script: [
-                            classpath: [], 
-                            sandbox: false,
-                            script: '''
-                                def customers = ["test"]
-                                if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                                    customers.addAll(${customers_list})
-                                }
-                                return customers
-                            '''
-                        ]
-                    )
-                ],
-                [$class: 'CascadeChoiceParameter',
-                    choiceType: 'PT_CHECKBOX', 
-                    description: 'Select customer to update', 
-                    filterLength: 1, 
-                    filterable: false, 
-                    name: 'SERVER_103.245.249.218_CUSTOMER_LIST', 
-                    randomName: 'choice-parameter-370758416905302',
-                    referencedParameters: 'WEB_SERVER_LIST', 
-                    script: groovyScript(
-                        fallbackScript: [
-                            classpath: [], 
-                            sandbox: false,
-                            script: 'return ["error"]'
-                        ], 
-                        script: [
-                            classpath: [], 
-                            sandbox: false,
-                            script: '''
-                                def customers = ["test"]
-                                if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                                    customers.addAll(["KH-ERP9-04","KH-ERP9-05:selected","KH-ERP9-06:selected","KH-ERP9-08:selected"])
-                                }
-                                return customers
-                            '''
-                        ]
-                    )
-                ]
-            ])
+        properties(parameters{
+            [$class: 'ChoiceParameter',
+                choiceType: 'PT_CHECKBOX', 
+                description: 'test', 
+                filterLength: 1, 
+                filterable: false, 
+                name: 'TEST', 
+                randomName: 'choice-parameter-370758416905303', 
+                script: groovyScript(
+                    fallbackScript: [
+                        classpath: [], 
+                        sandbox: false,
+                        script: 'return ["error"]'
+                    ], 
+                    script: [
+                        classpath: [], 
+                        sandbox: false,
+                        script: """
+                            return ${customers_list}
+                        """
+                    ]
+                )
+            ]
         })
+    }
 }
 
-// properties([
-    
-// ])
+properties([
+    parameters([
+        [$class: 'ChoiceParameter',
+            choiceType: 'PT_CHECKBOX', 
+            description: 'Select Web Server to update source web', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'WEB_SERVER_LIST', 
+            randomName: 'choice-parameter-370758416905300', 
+            script: groovyScript(
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["error"]'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["116.118.95.121:selected","103.245.249.218:selected"]'
+                ]
+            )
+        ],
+        [$class: 'CascadeChoiceParameter',
+            choiceType: 'PT_CHECKBOX', 
+            description: 'Select customer to update', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'SERVER_116.118.95.121_CUSTOMER_LIST', 
+            randomName: 'choice-parameter-370758416905301',
+            referencedParameters: 'WEB_SERVER_LIST', 
+            script: groovyScript(
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["error:disabled"]'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: """
+                        def customers = ["test"]
+                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            customers.addAll(${customers_list})
+                        }
+                        return customers
+                    """
+                ]
+            )
+        ],
+        [$class: 'CascadeChoiceParameter',
+            choiceType: 'PT_CHECKBOX', 
+            description: 'Select customer to update', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'SERVER_103.245.249.218_CUSTOMER_LIST', 
+            randomName: 'choice-parameter-370758416905302',
+            referencedParameters: 'WEB_SERVER_LIST', 
+            script: groovyScript(
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: 'return ["error"]'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: false,
+                    script: '''
+                        def customers = ["test"]
+                        if(WEB_SERVER_LIST.contains("103.245.249.218")){
+                            customers.addAll(["KH-ERP9-04","KH-ERP9-05:selected","KH-ERP9-06:selected","KH-ERP9-08:selected"])
+                        }
+                        return customers
+                    '''
+                ]
+            )
+        ]
+    ])
+])
 
 pipeline {
 
