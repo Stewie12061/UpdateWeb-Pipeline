@@ -13,7 +13,10 @@ node('master') {
         echo "$customers_list"
     }
 }
-
+def code = sprintf("""
+    choices = $customers_list
+    return choices 
+"""
 
 properties([
     parameters([
@@ -54,18 +57,7 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: '''
-                        def customers = []
-                        println("WEB_SERVER_LIST: " + WEB_SERVER_LIST)
-                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                            println("Adding customers from customers_list")
-                            customers.addAll(customers_list)
-                        } else {
-                            println("Web server not found in WEB_SERVER_LIST")
-                        }
-                        println("Final customers list: " + customers)
-                        return customers
-                    '''
+                    script: code
                 ]
             )
         ],
