@@ -43,11 +43,30 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = []
-                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                            customers.addAll(["KH-ERP9-01","KH-ERP9-02:selected","KH-ERP9-03:selected","KH-ERP9-07:selected"])
+                        def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select Name'
+                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command \\"${command}\\" "
+                        def process = shellCommand.execute()
+                        process.waitFor()
+
+                        // Reading the output of the process
+                        def output = process.text.trim() // Trim whitespace
+
+                        // Split the output into lines
+                        def lines = output.split('\\n')
+
+                        // Create a list to store the directory names
+                        def directories = []
+
+                        // Iterate over each line and add the directory names to the list, excluding "Name" and "----"
+                        lines.each { line ->
+                            def directoryName = line.trim()
+                            if (!directoryName.isEmpty() && !directoryName.startsWith("Name") && !directoryName.startsWith("-")) {
+                                directories.add(directoryName)
+                            }
                         }
-                        return customers
+
+                        // Return the list of directory names
+                        return directories
                     '''
                 ]
             )
