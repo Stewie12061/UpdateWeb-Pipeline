@@ -9,10 +9,12 @@ node('master') {
         def my_choices = powershell(script: 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name', returnStdout: true)
 
         customers_list = my_choices.split("\n").collect { it + ":selected" }
-
-        echo customers_list.join(", ")
     }
 }
+
+// Convert the list to a JSON string
+def customers_list_json = JsonOutput.toJson(customers_list)
+echo customers_list_json
 properties([
     parameters([
         [$class: 'ChoiceParameter',
