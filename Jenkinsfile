@@ -13,7 +13,7 @@ node('master') {
 }
 
 // Convert the list to a JSON string
-def customers_list_json = JsonOutput.toJson(customers_list)
+def customers_list_json = "[" + customers_list.join(", ") + "]"
 echo customers_list_json
 properties([
     parameters([
