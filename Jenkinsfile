@@ -49,24 +49,16 @@ properties([
                         process.waitFor()
 
                         // Reading the output of the process
-                        def output = process.text.trim() // Trim whitespace
+                        def output = process.text.trim()
 
-                        // Split the output into lines
-                        def lines = output.split('\\n')
+                        // Splitting the output by newline character and excluding the header and dashed line
+                        def names = output.split('\\n').findAll { it.trim() != 'Name' && it.trim() != '----' }.collect { it.trim() }
 
-                        // Create a list to store the directory names
-                        def directories = []
+                        // Constructing the list with the desired format
+                        def customers = names.collect { "\\"\${it}:selected\\"" }
 
-                        // Iterate over each line and add the directory names to the list, excluding "Name" and "----"
-                        lines.each { line ->
-                            def directoryName = line.trim()
-                            if (!directoryName.isEmpty() && !directoryName.startsWith("Name") && !directoryName.startsWith("-")) {
-                                directories.add(directoryName)
-                            }
-                        }
-
-                        // Return the list of directory names
-                        return directories
+                        // Printing the constructed list
+                        println customers
                     """
                 ]
             )
