@@ -3,6 +3,14 @@
 //     currentBuild.result = 'ABORTED' // optional, gives a better hint to the user that it's been skipped, rather than the default which shows it's successful
 //     return
 // }
+def customers_list = []
+node('') {
+    stage('prepare choices') {
+        def my_choices = sh script: "ls -l 'D:\\00.PUBLISH'", returnStdout:true
+        customers_list = my_choices.trim().split("\n")
+        echo "$customers_list"
+    }
+}
 properties([
     parameters([
         [$class: 'ChoiceParameter',
@@ -99,6 +107,7 @@ pipeline {
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
         string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
+        choiceParam('OPTION', customers_list)
     }
 
     agent {
