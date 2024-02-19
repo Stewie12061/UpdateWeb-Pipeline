@@ -44,7 +44,7 @@ properties([
                     sandbox: false,
                     script: '''
                         def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select-Object -ExpandProperty Name'
-                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command \$command"
+                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select-Object -ExpandProperty Name'"
                         def process = shellCommand.execute()
                         process.waitFor()
 
@@ -55,7 +55,7 @@ properties([
                         def names = output.split('\n').collect { it.trim() }.findAll { it != 'Name' && it != '----' }
 
                         // Constructing the list with the desired format
-                        def customers = names.collect { "\"it:selected\"" }
+                        def customer = names.collect { "\"it:selected\"" }
 
                         def customers = []
                         customers.addAll(["Areas:selected","Attached:selected","bin:selected","Content:selected","Content_1BOSS:selected","Logs:selected","Scripts:selected","Scripts_1BOSS:selected","UserGuide:selected","Views:selected","Views_1BOSS:selected"])
