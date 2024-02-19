@@ -44,7 +44,7 @@ properties([
                     sandbox: false,
                     script: """
                         def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select-Object -ExpandProperty Name'
-                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command ${command}"
+                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command \$command"
                         def process = shellCommand.execute()
                         process.waitFor()
 
