@@ -34,7 +34,7 @@ node('master') {
                 \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                 \$session = New-PSSession -ComputerName "AS063" -Credential \$cred -SessionOption \$sessionOption
                 Invoke-Command -Session \$session -ScriptBlock {
-                    Get-ChildItem -Path 'D:\\00.PUBLISH' -Directory | Select-Object -ExpandProperty Name
+                    Get-ChildItem -Path 'E:\\00.SVN\\60.1BOSS BUILD\\03.SERVICES' -Directory | Select-Object -ExpandProperty Name
                 }
             """
         ).trim()
