@@ -37,14 +37,14 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["error"]'
+                    script: 'return ["error:Disable"]'
                 ], 
                 script: [
                     classpath: [], 
                     sandbox: false,
                     script: """
                         def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select Name'
-                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command \\"\${command}\\" "
+                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select Name' "
                         def process = shellCommand.execute()
                         process.waitFor()
 
