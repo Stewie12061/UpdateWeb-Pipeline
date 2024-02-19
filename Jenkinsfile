@@ -4,7 +4,7 @@
 //     return
 // }
 def customers_list = []
-node('') {
+node('master') {
     stage('prepare choices') {
         def my_choices = sh script: "ls -l 'D:\\00.PUBLISH'", returnStdout:true
         customers_list = my_choices.trim().split("\n")
@@ -107,7 +107,7 @@ pipeline {
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
         string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
-        choice(choices: "$customers_list", name: 'DEPLOYMENT_ENVIRONMENT', description: 'please choose the environment you want to deploy?')
+        choice(choices: "${customers_list}", name: 'DEPLOYMENT_ENVIRONMENT', description: 'please choose the environment you want to deploy?')
     }
 
     agent {
