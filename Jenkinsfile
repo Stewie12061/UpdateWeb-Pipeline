@@ -43,11 +43,8 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: """
-                        import jenkins.model.*
-                        jenkins = Jenkins.instance
-
                         def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select-Object -ExpandProperty Name'
-                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command "\$(command)""
+                        def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command ${command}"
                         def process = shellCommand.execute()
                         process.waitFor()
 
@@ -58,7 +55,7 @@ properties([
                         def names = output.split('\n').collect { it.trim() }.findAll { it != 'Name' && it != '----' }
 
                         // Constructing the list with the desired format
-                        def customers = names.collect { "\"\$(it):selected\"" }
+                        def customers = names.collect { "\"it:selected\"" }
 
                         // Printing the constructed list
                         println customers
