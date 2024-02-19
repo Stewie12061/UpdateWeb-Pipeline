@@ -16,7 +16,7 @@ node('master') {
 def code = sprintf("""
     choices = $customers_list
     return choices 
-"""
+""")
 
 properties([
     parameters([
