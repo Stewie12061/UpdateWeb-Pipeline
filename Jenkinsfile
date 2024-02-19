@@ -11,30 +11,6 @@ node('master') {
         customers_list = my_choices.split("\n").collect { "\"${it.trim()}:selected\"" }
 
         echo "$customers_list"
-        properties(parameters{
-            [$class: 'ChoiceParameter',
-                choiceType: 'PT_CHECKBOX', 
-                description: 'test', 
-                filterLength: 1, 
-                filterable: false, 
-                name: 'TEST', 
-                randomName: 'choice-parameter-370758416905303', 
-                script: groovyScript(
-                    fallbackScript: [
-                        classpath: [], 
-                        sandbox: false,
-                        script: 'return ["error"]'
-                    ], 
-                    script: [
-                        classpath: [], 
-                        sandbox: false,
-                        script: """
-                            return ${customers_list}
-                        """
-                    ]
-                )
-            ]
-        })
     }
 }
 
