@@ -6,26 +6,7 @@
 def customers_list = []
 node('master') {
     stage('prepare choices') {
-        // def my_choices = powershell(script: 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name', returnStdout: true)
-
-        // customers_list = my_choices.split("\n").collect { "\"${it.trim()}:selected\"" }
-
-        // echo "$customers_list"
-
         def customers = []
-        // def result = powershell(
-        //         returnStdout: true,
-        //         script: """
-        //             \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-        //             \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
-        //             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-        //             \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
-        //             Invoke-Command -Session \$session -ScriptBlock {
-        //                 Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
-        //             }
-        //         """
-        //     ).trim()
-        //     customers = result.tokenize('\\n').collect { it.trim() }
         def result = powershell(
             returnStdout: true,
             script: """
@@ -41,7 +22,7 @@ node('master') {
         echo "result: $result"
         customers_list = result.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
         echo "Customers list: $customers_list"
-}
+    }
 }
 
 properties([
@@ -84,11 +65,32 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: """
+                        // def customers = ["test"]
+                        // if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                        //     customers.addAll(${customers_list})
+                        // }
+                        // return customers
+
+                        def result = powershell(
+                            returnStdout: true,
+                            script: """
+                                \$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+                                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \$securepassword
+                                \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                \$session = New-PSSession -ComputerName "MSI" -Credential \$cred -SessionOption \$sessionOption
+                                Invoke-Command -Session \$session -ScriptBlock {
+                                    Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
+                                }
+                        """).trim()
+                        echo "result: $result"
+                        customers_list = result.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
+
                         def customers = ["test"]
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                            customers.addAll(${customers_list})
+                            customers.addAll(customers_list)
                         }
                         return customers
+                        
                     """
                 ]
             )
