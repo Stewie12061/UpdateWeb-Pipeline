@@ -10,8 +10,7 @@ node('master') {
 
         customers_list = my_choices.split("\n").collect { it + ":selected" }
 
-        // Print the modified choices
-        echo customers_list
+        echo customers_list.join(", ")
     }
 }
 properties([
