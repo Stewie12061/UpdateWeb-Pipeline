@@ -29,10 +29,10 @@ node('master') {
         def result = powershell(
             returnStdout: true,
             script: """
-                \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
-                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                \$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \$securepassword
                 \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                \$session = New-PSSession -ComputerName "AS063" -Credential \$cred -SessionOption \$sessionOption
+                \$session = New-PSSession -ComputerName "192.168.0.159" -Credential \$cred -SessionOption \$sessionOption
                 Invoke-Command -Session \$session -ScriptBlock {
                     Get-ChildItem -Path 'E:\\00.SVN\\60.1BOSS BUILD\\03.SERVICES' -Directory | Select-Object -ExpandProperty Name
                 }
