@@ -6,7 +6,7 @@
 def customers_list = []
 node('master') {
     stage('prepare choices') {
-        def my_choices = sh script: "ls -l 'D:\\00.PUBLISH'", returnStdout:true
+        def my_choices = powershell script: "ls -l 'D:\\00.PUBLISH'", returnStdout:true
         customers_list = my_choices.trim().split("\n")
         echo "$customers_list"
     }
