@@ -11,7 +11,8 @@ node('master') {
         customers_list = my_choices.split("\n").collect { "\"${it.trim()}:selected\"" }
 
         echo "$customers_list"
-        properties(parameters{
+    }
+    properties(parameters{
             parameters([
                 [$class: 'ChoiceParameter',
                     choiceType: 'PT_CHECKBOX', 
@@ -89,7 +90,6 @@ node('master') {
                 ]
             ])
         })
-    }
 }
 
 // properties([
