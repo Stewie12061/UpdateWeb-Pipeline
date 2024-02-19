@@ -6,12 +6,42 @@
 def customers_list = []
 node('master') {
     stage('prepare choices') {
-        def my_choices = powershell(script: 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name', returnStdout: true)
+        // def my_choices = powershell(script: 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name', returnStdout: true)
 
-        customers_list = my_choices.split("\n").collect { "\"${it.trim()}:selected\"" }
+        // customers_list = my_choices.split("\n").collect { "\"${it.trim()}:selected\"" }
 
-        echo "$customers_list"
-    }
+        // echo "$customers_list"
+
+        def customers = []
+        // def result = powershell(
+        //         returnStdout: true,
+        //         script: """
+        //             \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+        //             \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+        //             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+        //             \$session = New-PSSession -ConnectionUri "https://116.118.95.121:5986" -Credential \$cred -SessionOption \$sessionOption
+        //             Invoke-Command -Session \$session -ScriptBlock {
+        //                 Get-ChildItem -Path 'D:\\ERP9' -Directory | Select-Object -ExpandProperty Name
+        //             }
+        //         """
+        //     ).trim()
+        //     customers = result.tokenize('\\n').collect { it.trim() }
+        def result = powershell(
+            returnStdout: true,
+            script: """
+                \$securepassword = ConvertTo-SecureString -String 'As@19006123' -AsPlainText -Force
+                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'stewie12061', \$securepassword
+                \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                \$session = New-PSSession -ComputerName "AS063" -Credential \$cred -SessionOption \$sessionOption
+                Invoke-Command -Session \$session -ScriptBlock {
+                    Get-ChildItem -Path 'D:\\00.PUBLISH' -Directory | Select-Object -ExpandProperty Name
+                }
+            """
+        ).trim()
+        echo "result: $result"
+        customers_list = result.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
+        echo "Customers list: $customers_list"
+}
 }
 
 properties([
@@ -105,7 +135,6 @@ pipeline {
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
         string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
-        choice(choices: "${customers_list}", name: 'DEPLOYMENT_ENVIRONMENT', description: 'please choose the environment you want to deploy?')
     }
 
     agent {
