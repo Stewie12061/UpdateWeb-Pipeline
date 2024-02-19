@@ -42,7 +42,7 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: '''
+                    script: """
                         def command = 'Get-ChildItem "D:\\00.PUBLISH" -Directory | Select Name'
                         def shellCommand = "powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command \\"${command}\\" "
                         def process = shellCommand.execute()
@@ -67,7 +67,7 @@ properties([
 
                         // Return the list of directory names
                         return directories
-                    '''
+                    """
                 ]
             )
         ],
