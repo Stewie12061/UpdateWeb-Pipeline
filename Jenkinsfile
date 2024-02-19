@@ -107,7 +107,7 @@ pipeline {
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
         string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
-        choiceParam('OPTION', customers_list)
+        choice(choices: "$customers_list", name: 'DEPLOYMENT_ENVIRONMENT', description: 'please choose the environment you want to deploy?')
     }
 
     agent {
