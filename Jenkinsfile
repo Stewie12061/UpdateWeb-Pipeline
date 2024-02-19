@@ -3,27 +3,28 @@
 //     currentBuild.result = 'ABORTED' // optional, gives a better hint to the user that it's been skipped, rather than the default which shows it's successful
 //     return
 // }
-def customers_list = []
-node('master') {
-    stage('prepare choices') {
-        def customers = []
-        def result = powershell(
-            returnStdout: true,
-            script: """
-                \$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
-                \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \$securepassword
-                \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                \$session = New-PSSession -ComputerName "MSI" -Credential \$cred -SessionOption \$sessionOption
-                Invoke-Command -Session \$session -ScriptBlock {
-                    Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
-                }
-            """
-        ).trim()
-        echo "result: $result"
-        customers_list = result.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
-        echo "Customers list: $customers_list"
-    }
-}
+
+// def customers_list = []
+// node('master') {
+//     stage('prepare choices') {
+//         def customers = []
+//         def result = powershell(
+//             returnStdout: true,
+//             script: """
+//                 \$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+//                 \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \$securepassword
+//                 \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+//                 \$session = New-PSSession -ComputerName "MSI" -Credential \$cred -SessionOption \$sessionOption
+//                 Invoke-Command -Session \$session -ScriptBlock {
+//                     Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
+//                 }
+//             """
+//         ).trim()
+//         echo "result: $result"
+//         customers_list = result.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
+//         echo "Customers list: $customers_list"
+//     }
+// }
 
 properties([
     parameters([
@@ -83,7 +84,7 @@ properties([
                             }
                         ''').trim()
                         echo "result: $result"
-                        customers_list = result.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
+                        def customers_list = result.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
 
                         def customers = ["test"]
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
