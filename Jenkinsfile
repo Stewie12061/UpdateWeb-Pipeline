@@ -58,7 +58,7 @@ properties([
                         def customers = names.collect { "\"it:selected\"" }
 
                         // Printing the constructed list
-                        println customers
+                        return customers
                     """
                 ]
             )
