@@ -8,7 +8,7 @@ node('master') {
     stage('prepare choices') {
         def my_choices = powershell(script: 'Get-ChildItem D:\\00.PUBLISH -Directory | Select-Object -ExpandProperty Name', returnStdout: true)
 
-        customers_list = my_choices.split("\n").collect { "\"$it.trim():selected\"" }
+        customers_list = my_choices.split("\n").collect { "\"${it.trim()}:selected\"" }
 
         echo "$customers_list"
     }
