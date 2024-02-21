@@ -66,7 +66,7 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def powerShellScript = $/Get-ChildItem -Path E:\\Test -Name /$
+                        def powerShellScript = "Get-ChildItem -Path E:\\Test -Name "
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
