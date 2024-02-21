@@ -44,7 +44,23 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["116.118.95.121","103.245.249.218:selected"]'
+                    script: '''
+                        def executePowerShellScript() {
+                        def powerShellScript = """
+                        # Your PowerShell script goes here
+                        Write-Host "Hello from PowerShell!"
+                        # You can execute any PowerShell commands or scripts here
+                        """
+                        
+                        // Execute PowerShell script
+                        def command = ["powershell", "-Command", powerShellScript]
+                        def proc = command.execute()
+                        proc.waitFor()
+                        return proc.text
+                    }
+
+                    return executePowerShellScript()
+                    '''
                 ]
             )
         ],
@@ -138,34 +154,6 @@ pipeline {
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
         string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
-        activeChoice(
-            name: 'MyActiveChoiceParameter',
-            description: 'Select an option',
-            script: [
-                // Define Groovy script to execute PowerShell script
-                groovyScript: [
-                    classpath: [],
-                    sandbox: true,
-                    script: """
-                        def executePowerShellScript() {
-                            def powerShellScript = '''
-                            # Your PowerShell script goes here
-                            Write-Host "Hello from PowerShell!"
-                            # You can execute any PowerShell commands or scripts here
-                            '''
-                            
-                            // Execute PowerShell script
-                            def command = ["powershell", "-Command", powerShellScript]
-                            def proc = command.execute()
-                            proc.waitFor()
-                            return proc.text
-                        }
-                        
-                        return executePowerShellScript()
-                    """
-                ]
-            ]
-        )
     }
 
     agent {
