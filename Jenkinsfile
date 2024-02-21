@@ -67,7 +67,7 @@ properties([
                     sandbox: false,
                     script: '''
                         def customers = ["ok"]
-                        def powerShellScript = """Write-Host "okkkk" """
+                        def powerShellScript = """ Get-ChildItem -Path "E:\\Test" -Name """
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
