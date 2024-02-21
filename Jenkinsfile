@@ -60,7 +60,7 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["error:disabled"]'
+                    script: 'return [\'Could not get Customers\']'
                 ], 
                 script: [
                     classpath: [], 
