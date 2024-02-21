@@ -86,6 +86,15 @@ properties([
                             proc.waitFor()       
 
                             def output = proc.in.text
+                            def exitcode= proc.exitValue()
+                            def error = proc.err.text
+
+                            if (error) {
+                                println "Std Err: ${error}"
+                                println "Process exit code: ${exitcode}"
+                                return exitcode
+                            }
+
                             def customers_list = output.tokenize("\n") ?: ["ohno"]
                             customers.addAll(customers_list)
                         }
