@@ -67,9 +67,15 @@ properties([
                     sandbox: false,
                     script: '''
                         def executePowerShellScript() {
-                                def customers = ["test"]
+                                def customers = []
                                 def powerShellScript = """
-                                    Write-Host "Hello from PowerShell!"
+                                    \$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+                                    \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \$securepassword
+                                    \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                    \$session = New-PSSession -ComputerName "MSI" -Credential \$cred -SessionOption \$sessionOption
+                                    Invoke-Command -Session \$session -ScriptBlock {
+                                        Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
+                                    }
                                 """
                                 
                                 // Execute PowerShell script
@@ -132,6 +138,34 @@ pipeline {
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
         string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
+        activeChoiceParam(
+            name: 'MyActiveChoiceParameter',
+            description: 'Select an option',
+            script: [
+                // Define Groovy script to execute PowerShell script
+                groovyScript: [
+                    classpath: [],
+                    sandbox: true,
+                    script: """
+                        def executePowerShellScript() {
+                            def powerShellScript = '''
+                            # Your PowerShell script goes here
+                            Write-Host "Hello from PowerShell!"
+                            # You can execute any PowerShell commands or scripts here
+                            '''
+                            
+                            // Execute PowerShell script
+                            def command = ["powershell", "-Command", powerShellScript]
+                            def proc = command.execute()
+                            proc.waitFor()
+                            return proc.text
+                        }
+                        
+                        return executePowerShellScript()
+                    """
+                ]
+            ]
+        )
     }
 
     agent {
