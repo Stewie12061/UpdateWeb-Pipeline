@@ -84,7 +84,7 @@ properties([
                         proc.waitFor()       
 
                         def output = proc.in.text
-                        println "Output: $output"
+                        println "Output: output"
                         def customers_list = output.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
 
                         def customers = ["test"]
