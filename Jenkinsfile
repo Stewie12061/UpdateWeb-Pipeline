@@ -26,6 +26,17 @@
 //     }
 // }
 
+def powerShellScript = """
+    $securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+    $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', $securepassword
+    $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+    $session = New-PSSession -ComputerName "MSI" -Credential $cred -SessionOption $sessionOption
+    Invoke-Command -Session $session -ScriptBlock {
+        Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Name
+    }
+    Remove-PSSession $session
+"""
+
 properties([
     parameters([
         [$class: 'ChoiceParameter',
@@ -66,16 +77,7 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def powerShellScript = $/
-                            $securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
-                            $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', $securepassword
-                            $sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            $session = New-PSSession -ComputerName "MSI" -Credential $cred -SessionOption $sessionOption
-                            Invoke-Command -Session $session -ScriptBlock {
-                                Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Name
-                            }
-                            Remove-PSSession $session
-                        /$
+                        
                         
                             
                         // Execute PowerShell script
