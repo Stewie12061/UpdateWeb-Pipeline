@@ -84,7 +84,7 @@ properties([
                         proc.waitFor()       
 
                         def output = proc.in.text
-                        def customers_list = output.tokenize("\n").collect { "\"${it}:selected\"" }
+                        def customers_list = output.tokenize("\n").collect { e -> "\"${e.trim()}:selected\"" }
 
                         def customers = ["test"]
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
