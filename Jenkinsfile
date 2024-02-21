@@ -84,8 +84,7 @@ properties([
                         proc.waitFor()       
 
                         def output = proc.in.text
-                        println "Output: output"
-                        def customers_list = output.tokenize("\n").collect { "\"it.trim():selected\"" }
+                        def customers_list = output.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
 
                         def customers = ["test"]
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
@@ -115,7 +114,7 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = ["test"]
+                        def customers = []
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
                             customers.addAll(["KH-ERP9-04","KH-ERP9-05:selected","KH-ERP9-06:selected","KH-ERP9-08:selected"])
                         }
