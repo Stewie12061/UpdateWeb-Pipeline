@@ -66,7 +66,9 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def command = [
+                        def customers = ["test"]
+                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            def command = [
                             'powershell.exe',
                             '-Command',
                             """
@@ -78,19 +80,17 @@ properties([
                                 Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
                             }
                             """
-                        ]
+                            ]
 
-                        def proc = command.execute()
-                        proc.waitFor()       
+                            def proc = command.execute()
+                            proc.waitFor()       
 
-                        def output = proc.in.text
-                        def customers_list = output.tokenize("\n").collect { e -> "\"${e.trim()}:selected\"" }
-
-                        def customers = ["test"]
-                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            def output = proc.in.text
+                            def customers_list = output.tokenize("\n").collect { e -> "\"${e.trim()}:selected\"" }
                             customers.addAll(customers_list)
                         }
-                        return customers
+
+                            return customers
                         
                     '''
                 ]
