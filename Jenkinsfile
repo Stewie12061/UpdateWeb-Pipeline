@@ -102,11 +102,18 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = []
+                        def powerShellScript = "Get-ChildItem -Path \\\\\\MSI\\\\b -Name"
+                            
+                        // Execute PowerShell script
+                        def command = ["powershell", "-Command", powerShellScript]
+                        def proc = command.execute()
+                        proc.waitFor()
+
+                        def output = proc.in.text.trim().tokenize()
+
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            customers.addAll(["KH-ERP9-04","KH-ERP9-05:selected","KH-ERP9-06:selected","KH-ERP9-08:selected"])
+                            return output
                         }
-                        return customers
                     '''
                 ]
             )
