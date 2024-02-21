@@ -138,7 +138,7 @@ pipeline {
         string(name: 'PASSWORD', defaultValue: 'As@19006123', description: 'Password login to server')
         string(name: 'SOURCE_PATH', defaultValue: 'D:\\00.PUBLISH', description: 'Path to source web')
         string(name: 'DESTINATION_FOLDER', defaultValue: 'Publish-stewie', description: 'Folder Publish on Servers')
-        activeChoiceParam(
+        activeChoice(
             name: 'MyActiveChoiceParameter',
             description: 'Select an option',
             script: [
