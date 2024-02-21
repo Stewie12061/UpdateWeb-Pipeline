@@ -68,13 +68,7 @@ properties([
                     script: '''
                         def customers = ["test"]
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                            def command = [
-                                'powershell.exe',
-                                '-Command',
-                                """
-                                    Get-ChildItem -Path 'E:\\00.SVN\\60.1BOSS BUILD\\03.SERVICES' -Directory | Select-Object -ExpandProperty Name
-                                """
-                            ]
+                            def command = "pwd"
 
                             def proc = command.execute()
                             proc.waitFor()       
