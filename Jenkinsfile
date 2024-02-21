@@ -60,7 +60,7 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return [\'Could not get Customers\']'
+                    script: ''
                 ], 
                 script: [
                     classpath: [], 
@@ -95,7 +95,7 @@ properties([
                                 return exitcode
                             }
 
-                            def customers_list = output.tokenize("\n") ?: ["ohno"]
+                            def customers_list = output.tokenize("\n").collect { e -> "\"${e.trim()}:selected\"" }
                             customers.addAll(customers_list)
                         }
 
