@@ -60,7 +60,7 @@ properties([
                 fallbackScript: [
                     classpath: [], 
                     sandbox: false,
-                    script: ''
+                    script: 'return [\'Could not get Customers\']'
                 ], 
                 script: [
                     classpath: [], 
@@ -81,9 +81,9 @@ properties([
                                     }
                                 """
                             ]
-
+                            def sout = new StringBuilder(), serr = new StringBuilder()
                             def proc = command.execute()
-                            proc.waitFor()       
+                            proc.waitForProcessOutput(sout, serr)     
 
                             def output = proc.in.text
                             def exitcode= proc.exitValue()
