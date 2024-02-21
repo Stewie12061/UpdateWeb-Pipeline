@@ -66,7 +66,7 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = []
+                        def customers = ["ok"]
                         def powerShellScript = "Get-ChildItem -Path 'E:\\Test' -Directory | Select-Object -ExpandProperty Name"
                             
                         // Execute PowerShell script
