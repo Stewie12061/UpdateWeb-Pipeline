@@ -66,8 +66,7 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = ["ok"]
-                        def powerShellScript = "Get-ChildItem -Path E:\\Test -Name"
+                        def powerShellScript = $/Get-ChildItem -Path E:\\Test -Name /$
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
@@ -75,10 +74,9 @@ properties([
                         proc.waitFor()
 
                         def output = proc.in.text.trim().tokenize()
-                        customers.addAll(output)
 
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                            return customers
+                            return output
                         }
                         
                     '''
