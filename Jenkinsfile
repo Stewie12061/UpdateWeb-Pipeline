@@ -45,21 +45,20 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def executePowerShellScript() {
+                        def customers = []
                         def powerShellScript = """
-                        # Your PowerShell script goes here
-                        Write-Host "Hello from PowerShell!"
-                        # You can execute any PowerShell commands or scripts here
-                        """
-                        
+                            # Your PowerShell script goes here
+                            Write-Host "test"
+                            # You can execute any PowerShell commands or scripts here
+                            """
+                            
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
                         def proc = command.execute()
                         proc.waitFor()
-                        return proc.text
-                    }
+                        customers.addAll(proc.text.trim())
 
-                    return executePowerShellScript()
+                        return customers
                     '''
                 ]
             )
