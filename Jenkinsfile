@@ -81,13 +81,17 @@ properties([
                                     }
                                 """
                             ]
-                            def sout = new StringBuilder(), serr = new StringBuilder()
+
                             def proc = command.execute()
-                            proc.waitForProcessOutput(sout, serr)     
+                            proc.waitFor()       
 
                             def output = proc.in.text
                             def exitcode= proc.exitValue()
                             def error = proc.err.text
+
+                            println output
+                            println exitcode
+                            println error
 
                             if (error) {
                                 println "Std Err: ${error}"
@@ -95,7 +99,7 @@ properties([
                                 return exitcode
                             }
 
-                            def customers_list = output.tokenize("\n").collect { e -> "\"${e.trim()}:selected\"" }
+                            def customers_list = output.tokenize("\n")
                             customers.addAll(customers_list)
                         }
 
