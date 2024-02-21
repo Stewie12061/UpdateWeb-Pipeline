@@ -26,9 +26,7 @@
 //     }
 // }
 
-def powerShellScript = """
-    Get-ChildItem -Path E:\\\\Test -Name
-"""
+def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name"
 
 properties([
     parameters([
