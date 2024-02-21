@@ -85,7 +85,7 @@ properties([
 
                         def output = proc.in.text
                         println "Output: output"
-                        def customers_list = output.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
+                        def customers_list = output.tokenize("\n").collect { "\"it.trim():selected\"" }
 
                         def customers = ["test"]
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
