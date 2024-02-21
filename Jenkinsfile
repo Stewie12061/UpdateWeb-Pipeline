@@ -67,17 +67,18 @@ properties([
                     sandbox: false,
                     script: '''
                         def customers = []
+                        def sout = new StringBuffer(), serr = new StringBuffer()
                         def powerShellScript = """
-                                Write-Host "testtttt"
+                                Get-ChildItem -Path 'E:\\Test' -Directory | Select-Object -ExpandProperty Name
                             """
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
                         def proc = command.execute()
-                        proc.waitFor()
+                        proc.consumeProcessOutput(sout, serr)
                         def output = proc.text.trim()
                         customers.addAll(output)
-
+                        
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
                             return customers
                         }
