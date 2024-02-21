@@ -69,7 +69,6 @@ properties([
                         def customers = []
                         def powerShellScript = """
                                 Write-Host "testtttt"
-                                Get-ChildItem -Path 'E:\\Test' -Directory | Select-Object -ExpandProperty Name
                             """
                             
                         // Execute PowerShell script
