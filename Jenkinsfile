@@ -86,7 +86,7 @@ properties([
                             proc.waitFor()       
 
                             def output = proc.in.text
-                            def customersList = output.tokenize("\n").collect { "\"${it.trim()}\"" }
+                            def customers_list = output.tokenize("\n")
                             customers.addAll(customers_list)
                         }
 
