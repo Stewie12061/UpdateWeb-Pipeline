@@ -74,7 +74,7 @@ properties([
                         def proc = command.execute()
                         proc.waitFor()
 
-                        def output = proc.text.trim()
+                        def output = proc.in.text.trim().tokenize()
                         customers.addAll(output)
 
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
