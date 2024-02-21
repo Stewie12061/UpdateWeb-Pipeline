@@ -44,7 +44,7 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["116.118.95.121:selected","103.245.249.218:selected"]'
+                    script: 'return ["116.118.95.121","103.245.249.218:selected"]'
                 ]
             )
         ],
