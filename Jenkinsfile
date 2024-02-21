@@ -65,11 +65,11 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: """
+                    script: '''
                         def command = [
                             'powershell.exe',
                             '-Command',
-                            '''
+                            """
                             \$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
                             \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \$securepassword
                             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
@@ -77,14 +77,14 @@ properties([
                             Invoke-Command -Session \$session -ScriptBlock {
                                 Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
                             }
-                            '''
+                            """
                         ]
 
                         def proc = command.execute()
                         proc.waitFor()       
 
                         def output = proc.in.text
-                        def customers_list = output.tokenize("\n").collect { "\"${it.trim()}:selected\"" }
+                        def customers_list = output.tokenize("\n").collect { "\"${it}:selected\"" }
 
                         def customers = ["test"]
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
@@ -92,7 +92,7 @@ properties([
                         }
                         return customers
                         
-                    """
+                    '''
                 ]
             )
         ],
