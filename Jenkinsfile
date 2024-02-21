@@ -75,7 +75,7 @@ properties([
                         def command = ["powershell", "-Command", powerShellScript]
                         def proc = command.execute()
                         proc.waitFor()
-                        def output = proc.text.tokenize("\n")
+                        def output = proc.text.trim()
                         customers.addAll(output)
 
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
