@@ -119,7 +119,8 @@ properties([
                         def proc = command.execute()
                         proc.waitFor()
 
-                        def output = proc.in.text.trim().split('\n').collect { e-> "$e:selected" }
+                        def outputAsString = proc.in.text.trim()
+                        def output = outputAsString.split('\n').collect { e-> "${e.trim()}:selected" }	
 
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
                             return output
