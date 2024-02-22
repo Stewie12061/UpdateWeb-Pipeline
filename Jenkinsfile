@@ -66,17 +66,15 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        
-                        def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name"
-                            
-                        // Execute PowerShell script
-                        def command = ["powershell", "-Command", powerShellScript]
-                        def proc = command.execute()
-                        proc.waitFor()
-
-                        def output = proc.in.text.trim().tokenize()
-
                         if(WEB_SERVER_LIST.contains("116.118.95.121")){
+                            def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name"
+                            
+                            // Execute PowerShell script
+                            def command = ["powershell", "-Command", powerShellScript]
+                            def proc = command.execute()
+                            proc.waitFor()
+
+                            def output = proc.in.text.trim().tokenize()
                             return output
                         }
                         
@@ -102,7 +100,6 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def customers = []
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
                             def powerShellScript = """\
                             \\\$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
@@ -130,11 +127,7 @@ properties([
                                 println "Process exit code: ${exitcode}"
                                 return exitcode
                             }
-                            customers.addAll(output)
-                            return customers
-                        }
-                        else{
-                            return customers
+                            return output
                         }
                     '''
                 ]
