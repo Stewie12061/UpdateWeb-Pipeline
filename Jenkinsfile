@@ -121,11 +121,7 @@ properties([
                         def proc = command.execute()
                         proc.waitFor()
 
-                        def outputAsString = proc.in.text.trim()
-                        def output = []
-                        outputAsString.eachLine { line ->
-                            output.add("\\"${line.trim()}:selected\\"")
-                        }
+                        def output = proc.in.text.trim()
                         def customers = []
                         customers.addAll(output)	
 
