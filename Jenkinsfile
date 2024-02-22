@@ -108,7 +108,7 @@ properties([
                             \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             \$session = New-PSSession -ComputerName 'MSI' -Credential \$cred -SessionOption \$sessionOption
                             Invoke-Command -Session \$session -ScriptBlock {
-                                Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
+                                Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
                             }
                         """
 
