@@ -107,10 +107,12 @@ properties([
                             \\\$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \\\$securepassword
                             \\\$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             \\\$session = New-PSSession -ComputerName 'MSI' -Credential \\\$cred -SessionOption \\\$sessionOption
-                            Invoke-Command -Session \\\$session -ScriptBlock {
-                                Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
+                            \\\$output = Invoke-Command -Session \\\$session -ScriptBlock {
+                                \\\$items = Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Name | ForEach-Object { \\\$_ + ':selected' }
+                                Write-Output (\\\$items -join ',')
                             }
                             Remove-PSSession \\\$session
+                            Write-Output \\\$output
                         """
 
                             
