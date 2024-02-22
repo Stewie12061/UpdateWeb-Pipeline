@@ -118,8 +118,8 @@ properties([
                             // Execute PowerShell script
                             def command = ["powershell", "-Command", powerShellScript]
                             def proc = command.execute()
-                            //wait 30s
-                            proc.waitForOrKill(1000*30)
+                            //wait 3 mins
+                            proc.waitForOrKill(1000*180)
 
                             def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
                             def exitcode= proc.exitValue()
