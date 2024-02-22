@@ -122,7 +122,7 @@ properties([
                         def outputAsString = proc.in.text.trim()
                         def output = []
                         outputAsString.eachLine { line ->
-                            output.add("\"${line.trim()}:selected\"")
+                            output.add("\\"${line.trim()}:selected\\"")
                         }
                         def customers = []
                         customers.addAll(output)	
