@@ -119,6 +119,7 @@ properties([
                             def command = ["powershell", "-Command", powerShellScript]
                             def proc = command.execute()
                             proc.waitFor()
+                            proc.waitForOrKill(1000)
 
                             def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
 
