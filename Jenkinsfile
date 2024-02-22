@@ -102,7 +102,7 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def powerShellScript = "Get-ChildItem -Path \\\\\\MSI\\\\b -Name"
+                        def powerShellScript = "Get-ChildItem -Path \\\\MSI\\b -Name"
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
