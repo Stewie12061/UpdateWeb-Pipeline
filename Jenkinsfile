@@ -120,7 +120,10 @@ properties([
                         proc.waitFor()
 
                         def outputAsString = proc.in.text.trim()
-                        def output = outputAsString.split("\\r?\\n").collect { e-> "\\"${e.trim()}:selected\\"" }
+                        def output = []
+                        outputAsString.eachLine { line ->
+                            output.add("\"${line.trim()}:selected\"")
+                        }
                         def customers = []
                         customers.addAll(output)	
 
