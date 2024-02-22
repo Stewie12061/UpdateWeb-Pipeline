@@ -119,7 +119,7 @@ properties([
                                 //wait 3 mins
                                 proc.waitForOrKill(1000*180)
 
-                                def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
+                                def output = proc.in.text.trim().tokenize()
                             }catch(IOException e){
                                 return ["Timeout:disabled"]
                             }
