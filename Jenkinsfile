@@ -102,30 +102,26 @@ properties([
                     script: '''
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
                             def powerShellScript = """\
-                            \\\$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
-                            \\\$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \\\$securepassword
-                            \\\$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                            \\\$session = New-PSSession -ComputerName 'MSI' -Credential \\\$cred -SessionOption \\\$sessionOption
-                            Invoke-Command -Session \\\$session -ScriptBlock {
-                                Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Name
-                            }
-                            Remove-PSSession \\\$session
+                                \\\$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+                                \\\$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \\\$securepassword
+                                \\\$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                                \\\$session = New-PSSession -ComputerName 'MSI' -Credential \\\$cred -SessionOption \\\$sessionOption
+                                Invoke-Command -Session \\\$session -ScriptBlock {
+                                    Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Name
+                                }
+                                Remove-PSSession \\\$session
                             """
 
-                            // Execute PowerShell script
-                            def command = ["powershell", "-Command", powerShellScript]
-                            def proc = command.execute()
-                            //wait 3 mins
-                            proc.waitForOrKill(1000*180)
+                            try{
+                                // Execute PowerShell script
+                                def command = ["powershell", "-Command", powerShellScript]
+                                def proc = command.execute()
+                                //wait 3 mins
+                                proc.waitForOrKill(1000*180)
 
-                            def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
-                            def exitcode= proc.exitValue()
-                            def error = proc.err.text
-
-                            if (error) {
-                                println "Std Err: ${error}"
-                                println "Process exit code: ${exitcode}"
-                                return exitcode
+                                def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
+                            }catch(IOException e){
+                                return ["Timeout:disabled"]
                             }
                             return output
                         }
