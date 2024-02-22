@@ -66,15 +66,17 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
-                            def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name"
+                        
+                        def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name"
                             
-                            // Execute PowerShell script
-                            def command = ["powershell", "-Command", powerShellScript]
-                            def proc = command.execute()
-                            proc.waitFor()
+                        // Execute PowerShell script
+                        def command = ["powershell", "-Command", powerShellScript]
+                        def proc = command.execute()
+                        proc.waitFor()
 
-                            def output = proc.in.text.trim().tokenize()
+                        def output = proc.in.text.trim().tokenize()
+
+                        if(WEB_SERVER_LIST.contains("116.118.95.121")){
                             return output
                         }
                         
@@ -100,25 +102,26 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
+                        def powerShellScript = """\
+                            \\\$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+                            \\\$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \\\$securepassword
+                            \\\$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \\\$session = New-PSSession -ComputerName 'MSI' -Credential \\\$cred -SessionOption \\\$sessionOption
+                            Invoke-Command -Session \\\$session -ScriptBlock {
+                                Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
+                            }
+                            Remove-PSSession \\\$session
+                        """
+
+                            
+                        // Execute PowerShell script
+                        def command = ["powershell", "-Command", powerShellScript]
+                        def proc = command.execute()
+                        proc.waitFor()
+
+                        def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
+
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            def powerShellScript = """\
-                                \\\$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
-                                \\\$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \\\$securepassword
-                                \\\$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
-                                \\\$session = New-PSSession -ComputerName 'MSI' -Credential \\\$cred -SessionOption \\\$sessionOption
-                                Invoke-Command -Session \\\$session -ScriptBlock {
-                                    Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Name
-                                }
-                                Remove-PSSession \\\$session
-                            """
-
-                            // Execute PowerShell script
-                            def command = ["powershell", "-Command", powerShellScript]
-                            def proc = command.execute()
-                            //wait 
-                            proc.waitForOrKill(1000*10)
-
-                            def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
                             return output
                         }
                     '''
