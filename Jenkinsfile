@@ -112,17 +112,13 @@ properties([
                                 Remove-PSSession \\\$session
                             """
 
-                            try{
-                                // Execute PowerShell script
-                                def command = ["powershell", "-Command", powerShellScript]
-                                def proc = command.execute()
-                                //wait 3 mins
-                                proc.waitForOrKill(1000*180)
+                            // Execute PowerShell script
+                            def command = ["powershell", "-Command", powerShellScript]
+                            def proc = command.execute()
+                            //wait 
+                            proc.waitForOrKill(1000*10)
 
-                                def output = proc.in.text.trim().tokenize()
-                            }catch(IOException e){
-                                return ["Timeout:disabled"]
-                            }
+                            def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
                             return output
                         }
                     '''
