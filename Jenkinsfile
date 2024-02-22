@@ -120,10 +120,12 @@ properties([
                         proc.waitFor()
 
                         def outputAsString = proc.in.text.trim()
-                        def output = outputAsString.split('\\n').collect { e-> "\\"${e.trim()}:selected\\"" }	
+                        def output = outputAsString.split('\\n').collect { e-> "\\"${e.trim()}:selected\\"" }
+                        def customers = []
+                        customers.addAll(output)	
 
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
-                            return output
+                            return customers
                         }
                     '''
                 ]
