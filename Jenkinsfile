@@ -44,7 +44,7 @@ properties([
                 script: [
                     classpath: [], 
                     sandbox: false,
-                    script: 'return ["116.118.95.121","103.245.249.218:selected"]'
+                    script: 'return ["116.118.95.121","103.245.249.218"]'
                 ]
             )
         ],
@@ -102,7 +102,15 @@ properties([
                     classpath: [], 
                     sandbox: false,
                     script: '''
-                        def powerShellScript = 'Get-ChildItem -Path \\\\MSI\\Users\\test\\Desktop\\test -Name'
+                        def powerShellScript = '''
+                            \$securepassword = ConvertTo-SecureString -String '1' -AsPlainText -Force
+                            \$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \$securepassword
+                            \$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
+                            \$session = New-PSSession -ComputerName "MSI" -Credential \$cred -SessionOption \$sessionOption
+                            Invoke-Command -Session \$session -ScriptBlock {
+                                Get-ChildItem -Path 'G:\\ASOFT\\ASFOT_SOURCE\\ASOFT_ERP_8.3.7STD_2022\\10.SOURCES\\04.SERVICES' -Directory | Select-Object -ExpandProperty Name
+                            }
+                        '''
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
