@@ -67,7 +67,7 @@ properties([
                     sandbox: false,
                     script: '''
                         
-                        def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name"
+                        def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name | ForEach-Object { \\\$_ + ':selected' }"
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
@@ -107,12 +107,10 @@ properties([
                             \\\$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'test', \\\$securepassword
                             \\\$sessionOption = New-PSSessionOption -SkipCACheck -SkipCNCheck -SkipRevocationCheck
                             \\\$session = New-PSSession -ComputerName 'MSI' -Credential \\\$cred -SessionOption \\\$sessionOption
-                            \\\$output = Invoke-Command -Session \\\$session -ScriptBlock {
-                                \\\$items = Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Name | ForEach-Object { \\\$_ + ':selected' }
-                                Write-Output (\\\$items -join ',')
+                            Invoke-Command -Session \\\$session -ScriptBlock {
+                                Get-ChildItem -Path 'G:\\\\ASOFT\\\\ASFOT_SOURCE\\\\ASOFT_ERP_8.3.7STD_2022\\\\10.SOURCES\\\\04.SERVICES' -Name | ForEach-Object { \\\$_ + ':selected' }
                             }
                             Remove-PSSession \\\$session
-                            Write-Output \\\$output
                         """
 
                             
@@ -121,7 +119,7 @@ properties([
                         def proc = command.execute()
                         proc.waitFor()
 
-                        def output = proc.in.text.trim()
+                        def output = proc.in.text.trim().tokenize()
                         def customers = []
                         customers.addAll(output)	
 
