@@ -118,7 +118,7 @@ properties([
                         def proc = command.execute()
                         proc.waitFor()
 
-                        def output = proc.in.text.trim().tokenize()
+                        def output = proc.in.text.trim().tokenize().collect { "${it.trim()}:selected" }
 
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
                             return output
