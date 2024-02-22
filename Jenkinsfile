@@ -131,8 +131,11 @@ properties([
                                 return exitcode
                             }
                             customers.addAll(output)
+                            return customers
                         }
-                        return customers
+                        else{
+                            return customers
+                        }
                     '''
                 ]
             )
