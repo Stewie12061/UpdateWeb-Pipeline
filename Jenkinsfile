@@ -39,7 +39,7 @@ properties([
                     sandbox: false,
                     script: '''
                         
-                        def powerShellScript = "Get-ChildItem -Path E:\\\\Test -Name | ForEach-Object { \\\$_ + ':selected' }"
+                        def powerShellScript = "Get-ChildItem -Path \\\\\\\\MSI\\\\Users\\\\test\\\\Desktop\\\\test -Name | ForEach-Object { \\\$_ + ':selected' }"
                             
                         // Execute PowerShell script
                         def command = ["powershell", "-Command", powerShellScript]
@@ -85,17 +85,15 @@ properties([
                             Remove-PSSession \\\$session
                         """
 
-                            
-                        // Execute PowerShell script
-                        def command = ["powershell", "-Command", powerShellScript]
-                        def proc = command.execute()
-                        proc.waitFor()
-
-                        def output = proc.in.text.trim().tokenize()
-                        def customers = []
-                        customers.addAll(output)	
-
                         if(WEB_SERVER_LIST.contains("103.245.249.218")){
+                            // Execute PowerShell script
+                            def command = ["powershell", "-Command", powerShellScript]
+                            def proc = command.execute()
+                            proc.waitFor()
+
+                            def output = proc.in.text.trim().tokenize()
+                            def customers = []
+                            customers.addAll(output)	
                             return customers
                         }
                     '''
